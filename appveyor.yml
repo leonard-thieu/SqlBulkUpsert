@@ -34,5 +34,5 @@ deploy:
   - provider: NuGet
     symbol_server: https://ci.appveyor.com/nuget/leonard-thieu-h8hvbe0oe9o1/api/v2/package
     api_key:
-      secure: /1xeeARFO4Vq5fBD++gMHOTdE/9yqIc9o9fjcm3W1lw=
+      secure: NYFwcZ6c2123bMRxjnMflURWFm9/dgsS42R38FGa+8o=
     artifact: /.*\.symbols\.nupkg/
