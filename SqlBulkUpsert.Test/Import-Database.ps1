@@ -1,4 +1,4 @@
-$startPath = "$($env:appveyor_build_folder)\SqlBulkUpsert.Tests"
+$startPath = "$($env:appveyor_build_folder)\SqlBulkUpsert.Test"
 $sqlInstance = "(local)\SQL2014"
 $dbName = "SqlBulkUpsertTestDb"
 
