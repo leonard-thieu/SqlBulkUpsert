@@ -33,7 +33,6 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE TABLE [dbo].[TestUpsert](
-	[ident] int IDENTITY(1,1) NOT NULL,
 	[key_part_1] nchar(4) NOT NULL,
 	[key_part_2] smallint NOT NULL,
 	[nullable_text] nvarchar(50) NULL,

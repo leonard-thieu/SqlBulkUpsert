@@ -1,116 +1,127 @@
 ﻿using System;
 using System.Data;
+using static SqlBulkUpsert.Util;
 
 namespace SqlBulkUpsert
 {
-	public class Column : IEquatable<Column>
-	{
-		public Column()
-		{
-			CanBeInserted = true;
-			CanBeUpdated = true;
-		}
+    public class Column : IEquatable<Column>
+    {
+        public static Column CreateFromReader(IDataReader sqlDataReader)
+        {
+            if (sqlDataReader == null)
+                throw new ArgumentNullException(nameof(sqlDataReader));
 
-		public string Name { get; set; }
-		public int OrdinalPosition { get; set; }
-		public bool Nullable { get; set; }
-		public string DataType { get; set; }
-		public bool CanBeInserted { get; set; }
-		public bool CanBeUpdated { get; set; }
+            Column column;
+            var dataType = (string)sqlDataReader["DATA_TYPE"];
 
-		public virtual Column Clone()
-		{
-			return CopyTo(new Column());
-		}
+            switch (dataType)
+            {
+                case "bigint":
+                case "numeric":
+                case "bit":
+                case "smallint":
+                case "decimal":
+                case "smallmoney":
+                case "int":
+                case "tinyint":
+                case "money":
+                case "float":
+                case "real":
+                    column = new NumericColumn();
+                    break;
 
-		public virtual Column CopyTo(Column column)
-		{
-			column.Name = Name;
-			column.OrdinalPosition = OrdinalPosition;
-			column.Nullable = Nullable;
-			column.DataType = DataType;
-			column.CanBeInserted = CanBeInserted;
-			column.CanBeUpdated = CanBeUpdated;
-			return column;
-		}
+                case "date":
+                case "datetimeoffset":
+                case "datetime2":
+                case "smalldatetime":
+                case "datetime":
+                case "time":
+                    column = new DateColumn();
+                    break;
 
-		public virtual bool Equals(Column other)
-		{
-			return
-				 Name == other.Name &&
-				 OrdinalPosition == other.OrdinalPosition &&
-				 Nullable == other.Nullable &&
-				 DataType == other.DataType;
-		}
+                case "char":
+                case "varchar":
+                case "text":
+                case "nchar":
+                case "nvarchar":
+                case "ntext":
+                case "binary":
+                case "varbinary":
+                case "image":
+                    column = new TextColumn();
+                    break;
 
-		public string ToSelectListString()
-		{
-			return String.Format("[{0}]", Name);
-		}
+                default:
+                    column = new Column();
+                    break;
+            }
 
-		public virtual string ToColumnDefinitionString()
-		{
-			return String.Format("{0} {1} {2}NULL", ToSelectListString(), ToFullDataTypeString(), Nullable ? "" : "NOT ");
-		}
+            column.Populate(sqlDataReader);
 
-		public virtual string ToFullDataTypeString()
-		{
-			return DataType;
-		}
+            return column;
+        }
 
-		public static Column CreateFromReader(IDataReader sqlDataReader)
-		{
-			var dataType = (string)sqlDataReader["DATA_TYPE"];
-			Column column;
-			switch (dataType)
-			{
-				case "bigint":
-				case "numeric":
-				case "bit":
-				case "smallint":
-				case "decimal":
-				case "smallmoney":
-				case "int":
-				case "tinyint":
-				case "money":
-				case "float":
-				case "real":
-					column = new NumericColumn();
-					break;
-				case "date":
-				case "datetimeoffset":
-				case "datetime2":
-				case "smalldatetime":
-				case "datetime":
-				case "time":
-					column = new DateColumn();
-					break;
-				case "char":
-				case "varchar":
-				case "text":
-				case "nchar":
-				case "nvarchar":
-				case "ntext":
-				case "binary":
-				case "varbinary":
-				case "image":
-					column = new TextColumn();
-					break;
-				default:
-					column = new Column();
-					break;
-			}
+        public string Name { get; set; }
+        public int OrdinalPosition { get; set; }
+        public bool Nullable { get; set; }
+        public string DataType { get; set; }
+        public bool CanBeInserted { get; set; } = true;
+        public bool CanBeUpdated { get; set; } = true;
 
-			column.Populate(sqlDataReader);
-			return column;
-		}
+        public virtual Column Clone()
+        {
+            return CopyTo(new Column());
+        }
 
-		protected virtual void Populate(IDataReader sqlDataReader)
-		{
-			Name = (string)sqlDataReader["COLUMN_NAME"];
-			OrdinalPosition = (int)sqlDataReader["ORDINAL_POSITION"];
-			Nullable = ((string)sqlDataReader["IS_NULLABLE"]) == "YES";
-			DataType = (string)sqlDataReader["DATA_TYPE"];
-		}
-	}
+        public virtual Column CopyTo(Column column)
+        {
+            if (column == null)
+                throw new ArgumentNullException(nameof(column));
+
+            column.Name = Name;
+            column.OrdinalPosition = OrdinalPosition;
+            column.Nullable = Nullable;
+            column.DataType = DataType;
+            column.CanBeInserted = CanBeInserted;
+            column.CanBeUpdated = CanBeUpdated;
+
+            return column;
+        }
+
+        public virtual bool Equals(Column other)
+        {
+            return
+                other != null &&
+                Name == other.Name &&
+                OrdinalPosition == other.OrdinalPosition &&
+                Nullable == other.Nullable &&
+                DataType == other.DataType;
+        }
+
+        public string ToSelectListString()
+        {
+            return Invariant("[{0}]", Name);
+        }
+
+        public virtual string ToColumnDefinitionString()
+        {
+            return Invariant("{0} {1} {2}NULL", ToSelectListString(), ToFullDataTypeString(), Nullable ? "" : "NOT ");
+        }
+
+        public virtual string ToFullDataTypeString()
+        {
+            return DataType;
+        }
+
+        protected virtual void Populate(IDataReader sqlDataReader)
+        {
+            if (sqlDataReader == null)
+                throw new ArgumentNullException(nameof(sqlDataReader));
+
+            Name = (string)sqlDataReader["COLUMN_NAME"];
+            OrdinalPosition = (int)sqlDataReader["ORDINAL_POSITION"];
+            Nullable = ((string)sqlDataReader["IS_NULLABLE"]) == "YES";
+            DataType = (string)sqlDataReader["DATA_TYPE"];
+        }
+    }
 }

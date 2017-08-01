@@ -1,19 +1,19 @@
-﻿using NUnit.Framework;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace SqlBulkUpsert.Test
 {
-	public class DatabaseTestsBase
-	{
-		[TestFixtureSetUp]
-		public void Setup()
-		{
-			DatabaseHelper.RefreshSchema();
-		}
+    public abstract class DatabaseTestsBase
+    {
+        [ClassInitialize]
+        public void Setup()
+        {
+            DatabaseHelper.RefreshSchema();
+        }
 
-		[TearDown]
-		public void TearDown()
-		{
-			DatabaseHelper.ExecuteCommands("TRUNCATE TABLE [TestUpsert]");
-		}
-	}
+        [TestCleanup]
+        public void TearDown()
+        {
+            DatabaseHelper.ExecuteCommands("TRUNCATE TABLE [TestUpsert];");
+        }
+    }
 }

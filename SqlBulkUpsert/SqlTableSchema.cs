@@ -1,123 +1,126 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using SqlBulkUpsert.Properties;
+using System.Threading;
+using System.Threading.Tasks;
+using static SqlBulkUpsert.Util;
 
 namespace SqlBulkUpsert
 {
-	public class SqlTableSchema
-	{
-		private readonly List<Column> _columns = new List<Column>();
-		private readonly List<Column> _primaryKeyColumns = new List<Column>();
+    public sealed class SqlTableSchema
+    {
+        [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
+        public static async Task<SqlTableSchema> LoadFromDatabaseAsync(SqlConnection connection, string tableName, CancellationToken cancellationToken)
+        {
+            if (connection == null)
+                throw new ArgumentNullException(nameof(connection));
+            if (tableName == null)
+                throw new ArgumentNullException(nameof(tableName));
 
-		internal SqlTableSchema(string tableName)
-		{
-			if (tableName == null) throw new ArgumentNullException("tableName");
-			TableName = tableName;
-		}
+            using (var sqlCommand = connection.CreateCommand())
+            {
+                sqlCommand.CommandText = @"
+-- Check table exists
+SELECT *
+FROM INFORMATION_SCHEMA.TABLES
+WHERE TABLE_NAME = @tableName;
 
-		internal SqlTableSchema(string tableName, IEnumerable<Column> columns)
-			: this(tableName)
-		{
-			if (columns == null) throw new ArgumentNullException("columns");
-			_columns = columns.ToList();
-		}
+-- Get column schema information for table (need this to create our temp table)
+SELECT *
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_NAME = @tableName;
 
-		internal SqlTableSchema(string tableName, IEnumerable<Column> columns, IEnumerable<string> primaryKeyColumns, string identityColumn)
-			: this(tableName)
-		{
-			if (columns == null) throw new ArgumentNullException("columns");
-			if (primaryKeyColumns == null) throw new ArgumentNullException("primaryKeyColumns");
-			if (identityColumn == null) throw new ArgumentNullException("identityColumn");
-			_columns = columns.ToList();
-			_primaryKeyColumns = Check(primaryKeyColumns);
-			IdentityColumn = _columns.First(c => c.Name == identityColumn);
-			
-			foreach (var primaryKeyColumn in _primaryKeyColumns)
-			{
-				primaryKeyColumn.CanBeUpdated = false;
-			}
+-- Identifies the columns making up the primary key (do we use this for our match?)
+SELECT kcu.COLUMN_NAME
+FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE kcu
+INNER JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc
+    ON kcu.CONSTRAINT_NAME = tc.CONSTRAINT_NAME
+    AND CONSTRAINT_TYPE = 'PRIMARY KEY'
+WHERE kcu.TABLE_NAME = @tableName;";
+                sqlCommand.Parameters.Add("@tableName", SqlDbType.VarChar).Value = tableName;
 
-			IdentityColumn.CanBeInserted = false;
-			IdentityColumn.CanBeUpdated = false;
-		}
+                using (var sqlDataReader = await sqlCommand.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false))
+                {
+                    if (!await sqlDataReader.ReadAsync(cancellationToken).ConfigureAwait(false))
+                    {
+                        throw new InvalidOperationException("Table not found.");
+                    }
 
-		private List<Column> Check(IEnumerable<string> primaryKeyColumns)
-		{
-			return primaryKeyColumns
-				.Select(columnName => _columns.First(c => c.Name == columnName))
-				.ToList();
-		}
+                    await sqlDataReader.NextResultAsync(cancellationToken).ConfigureAwait(false);
 
-		public IEnumerable<Column> Columns
-		{
-			get { return _columns.AsEnumerable(); }
-		}
+                    return await LoadFromReaderAsync(tableName, sqlDataReader, cancellationToken).ConfigureAwait(false);
+                }
+            }
+        }
 
-		public IEnumerable<Column> PrimaryKeyColumns
-		{
-			get { return _primaryKeyColumns.AsEnumerable(); }
-		}
+        internal static async Task<SqlTableSchema> LoadFromReaderAsync(string tableName, DbDataReader sqlDataReader, CancellationToken cancellationToken)
+        {
+            if (sqlDataReader == null)
+                throw new ArgumentNullException(nameof(sqlDataReader));
 
-		public Column IdentityColumn { get; private set; }
+            var columns = new List<Column>();
+            var primaryKeyColumns = new List<string>();
 
-		public string TableName { get; private set; }
-      
-		public static SqlTableSchema LoadFromDatabase(SqlConnection connection, string tableName, string identityColumn)
-		{
-			if (connection == null) throw new ArgumentNullException("connection");
-			if (tableName == null) throw new ArgumentNullException("tableName");
-         
-			using (var sqlCommand = connection.CreateCommand())
-			{
-				sqlCommand.CommandText = Resources.GetTableInfo;
-				sqlCommand.Parameters.Add("@tableName", SqlDbType.VarChar).Value = tableName;
-				using (var sqlDataReader = sqlCommand.ExecuteReader())
-				{
-					if (!sqlDataReader.Read())
-					{
-						throw new Exception("Table not found");
-					}
+            while (await sqlDataReader.ReadAsync(cancellationToken).ConfigureAwait(false))
+            {
+                var column = Column.CreateFromReader(sqlDataReader);
+                columns.Add(column);
+            }
 
-					sqlDataReader.NextResult();
+            await sqlDataReader.NextResultAsync(cancellationToken).ConfigureAwait(false);
 
-					return LoadFromReader(tableName, sqlDataReader, identityColumn);
-				}
-			}
-		}
+            while (await sqlDataReader.ReadAsync(cancellationToken).ConfigureAwait(false))
+            {
+                var columnName = (string)sqlDataReader["COLUMN_NAME"];
+                primaryKeyColumns.Add(columnName);
+            }
 
-		internal static SqlTableSchema LoadFromReader(string tableName, IDataReader sqlDataReader, string identityColumn)
-		{
-			var columns = new List<Column>();
-			var primaryKeyColumns = new List<string>();
+            return new SqlTableSchema(tableName, columns, primaryKeyColumns);
+        }
 
-			while (sqlDataReader.Read())
-			{
-				var column = Column.CreateFromReader(sqlDataReader);
-				columns.Add(column);
-			}
+        internal SqlTableSchema(string tableName, IEnumerable<Column> columns, IEnumerable<string> primaryKeyColumnNames)
+        {
+            if (tableName == null)
+                throw new ArgumentNullException(nameof(tableName));
+            if (columns == null)
+                throw new ArgumentNullException(nameof(columns));
+            if (!columns.Any())
+                throw new ArgumentException();
+            if (primaryKeyColumnNames == null)
+                throw new ArgumentNullException(nameof(primaryKeyColumnNames));
 
-			sqlDataReader.NextResult();
+            TableName = tableName;
 
-			while (sqlDataReader.Read())
-			{
-				var columnName = (string)sqlDataReader["COLUMN_NAME"];
-				primaryKeyColumns.Add(columnName);
-			}
+            foreach (var column in columns)
+            {
+                Columns.Add(column);
+            }
 
-			return new SqlTableSchema(tableName, columns, primaryKeyColumns, identityColumn);
-		}
+            foreach (var columnName in primaryKeyColumnNames)
+            {
+                var column = Columns.Single(c => c.Name == columnName);
+                column.CanBeUpdated = false;
+                PrimaryKeyColumns.Add(column);
+            }
+        }
 
-		public string ToCreateTableCommandText()
-		{
-			return String.Format("CREATE TABLE {0} ({1})", TableName, Columns.ToColumnDefinitionListString());
-		}
+        public string TableName { get; }
+        public ICollection<Column> Columns { get; } = new Collection<Column>();
+        public ICollection<Column> PrimaryKeyColumns { get; } = new Collection<Column>();
 
-		public string ToDropTableCommandText()
-		{
-			return String.Format("DROP TABLE {0}", TableName);
-		}
-	}
+        public string ToCreateTableCommandText()
+        {
+            return Invariant("CREATE TABLE {0} ({1});", TableName, Columns.ToColumnDefinitionListString());
+        }
+
+        public string ToDropTableCommandText()
+        {
+            return Invariant("DROP TABLE {0};", TableName);
+        }
+    }
 }
