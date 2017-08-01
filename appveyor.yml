@@ -3,11 +3,6 @@ image: Visual Studio 2017
 
 configuration:
   - Release
-build:
-  project: SqlBulkUpsert.sln
-  publish_nuget: true
-  publish_nuget_symbols: true
-  verbosity: minimal
 cache:
   - packages -> **\packages.config
 environment:
@@ -16,12 +11,28 @@ notifications:
   - provider: Slack
     incoming_webhook:
       secure: c7l1UmXHWpIDLL1awU4r0QYVPToYM/XjV8trFyD1oHArKxs/vBTYiKYScr1EhCUgmEX6sAFBTvkUHF/k5B+cGjzqRBR2XkAO+lzk8cHQ1FI=
+nuget:
+  account_feed: true
+  project_feed: true
+  disable_publish_on_pr: true
 services:
   - mssql2014
 
 before_build:
   - appveyor-retry nuget restore -DisableParallelProcessing
+build:
+  project: SqlBulkUpsert.sln
+  publish_nuget: true
+  publish_nuget_symbols: true
+  verbosity: minimal
 
 test_script:
   - ps: SqlBulkUpsert.Test\Import-Database.ps1
   - vstest.console /logger:Appveyor "SqlBulkUpsert.Test\bin\%CONFIGURATION%\SqlBulkUpsert.Test.dll"
+
+deploy:
+  - provider: NuGet
+    symbol_server: https://ci.appveyor.com/nuget/leonard-thieu-h8hvbe0oe9o1/api/v2/package
+    api_key:
+      secure: /1xeeARFO4Vq5fBD++gMHOTdE/9yqIc9o9fjcm3W1lw=
+    artifact: /.*\.symbols\.nupkg/
