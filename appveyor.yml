@@ -1,0 +1,25 @@
+version: 1.0.{build}
+image: Visual Studio 2017
+
+configuration:
+  - Release
+build:
+  project: SqlBulkUpsert.sln
+  verbosity: minimal
+cache:
+  - packages -> **\packages.config
+environment:
+  SqlBulkUpsertTestConnectionString: Server=(local)\SQL2014;Database=SqlBulkUpsertTestDb;User ID=sa;Password=Password12!
+notifications:
+  - provider: Slack
+    incoming_webhook:
+      secure: c7l1UmXHWpIDLL1awU4r0QYVPToYM/XjV8trFyD1oHArKxs/vBTYiKYScr1EhCUgmEX6sAFBTvkUHF/k5B+cGjzqRBR2XkAO+lzk8cHQ1FI=
+services:
+  - mssql2014
+
+before_build:
+  - appveyor-retry nuget restore -DisableParallelProcessing
+
+test_script:
+  - ps: SqlBulkUpsert.Test\Import-Database.ps1
+  - vstest.console /logger:Appveyor "SqlBulkUpsert.Test\bin\%CONFIGURATION%\SqlBulkUpsert.Test.dll"
