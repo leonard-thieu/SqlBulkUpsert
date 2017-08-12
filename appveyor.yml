@@ -22,7 +22,7 @@ build:
   verbosity: minimal
 
 test_script:
-  - ps: "$env:PROJECT.Test\Import-Database.ps1 -Instance '(local)\SQL2014'"
+  - ps: & "$env:PROJECT.Test\Attach-Database.ps1" -Instance '(local)\SQL2014'
   - vstest.console /logger:Appveyor "%PROJECT%.Test\bin\%CONFIGURATION%\%PROJECT%.Test.dll"
 
 deploy_script:
