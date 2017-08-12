@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-namespace SqlBulkUpsert.Test
+namespace SqlBulkUpsert.Tests
 {
     class ColumnComparer : EqualityComparer<Column>, IComparer
     {

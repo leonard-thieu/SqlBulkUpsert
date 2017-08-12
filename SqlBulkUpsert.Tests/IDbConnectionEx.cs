@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data;
 
-namespace SqlBulkUpsert.Test
+namespace SqlBulkUpsert.Tests
 {
     static class IDbConnectionEx
     {
