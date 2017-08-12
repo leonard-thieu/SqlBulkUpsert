@@ -1,4 +1,4 @@
 SqlBulkUpsert
 =============
 
-Wrapper around SqlBulkCopy for upserting multiple rows and retrieving their identities.
+Wrapper around SqlBulkCopy for upserting multiple rows.
