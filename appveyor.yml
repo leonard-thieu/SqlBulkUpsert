@@ -26,7 +26,7 @@ build:
 test_script:
   - ps: |
       & "$env:PROJECT.Tests\Attach-Database.ps1" -Instance '(local)\SQL2014'
-      .\Test-Project.ps1 -Namespace SqlBulkUpsert
+      .\Test-Project.ps1 -Assembly SqlBulkUpsert
 after_test:
   - ps: .\Submit-CodeCoverageResults.ps1
 

@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory=$true)]
-    [string]$Namespace
+    [string]$Assembly
 )
 
 if (-Not(Test-Path Env:\PROJECT)) { throw 'The environment variable "PROJECT" is not set. Tests will not be run.' }
@@ -16,5 +16,5 @@ $version = ($xml.packages.package | ? { $_.id -eq 'OpenCover' }).version
     -register:user `
     -target:'vstest.console.exe' `
     "-targetargs:.\$project.Tests\bin\$configuration\$project.Tests.dll /logger:AppVeyor" `
-    -filter:"+[$Namespace*]*"
+    -filter:"+[$Assembly*]*"
 if ($LASTEXITCODE -ne 0) { throw "Execution failed with exit code $LASTEXITCODE" }
