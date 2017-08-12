@@ -5,6 +5,8 @@ configuration:
   - Release
 environment:
   PROJECT: SqlBulkUpsert
+  COVERALLS_REPO_TOKEN:
+    secure: BZtcZR6WzervWOhyop4GC7pKy4lVKug2S0J6IVgmWv0ylXTsup23yLD54HPz53Ua
   SqlBulkUpsertTestConnectionString: Server=(local)\SQL2014;Database=SqlBulkUpsertTestDb;User ID=sa;Password=Password12!
 cache:
   - packages -> **\packages.config
@@ -23,8 +25,10 @@ build:
 
 test_script:
   - ps: |
-      & "$env:PROJECT.Test\Attach-Database.ps1" -Instance '(local)\SQL2014'
-  - vstest.console /logger:Appveyor "%PROJECT%.Test\bin\%CONFIGURATION%\%PROJECT%.Test.dll"
+      & "$env:PROJECT.Tests\Attach-Database.ps1" -Instance '(local)\SQL2014'
+      .\Test-Project.ps1 -Namespace SqlBulkUpsert
+after_test:
+  - ps: .\Submit-CodeCoverageResults.ps1
 
 deploy_script:
   - ps: .\Deploy-Project.ps1
