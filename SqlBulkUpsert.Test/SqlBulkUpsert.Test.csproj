@@ -63,7 +63,7 @@
     <Compile Include="TypedUpserterTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Import-Database.ps1" />
+    <None Include="Attach-Database.ps1" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
