@@ -22,7 +22,8 @@ if ($appveyor_repo_tag -ne 'true') {
     if ($LASTEXITCODE -ne 0) { throw "Execution failed with exit code $LASTEXITCODE" }
 
     [xml]$nuspec = Get-Content -Path "$appveyor_build_folder\$project\$project.nuspec"
+    $id = $nuspec.package.metadata.id
     $version = $nuspec.package.metadata.version
 
-    Push-AppveyorArtifact "$appveyor_build_folder\$project.$version.nupkg"
+    Push-AppveyorArtifact "$appveyor_build_folder\$id.$version.nupkg"
 }
