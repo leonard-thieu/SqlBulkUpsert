@@ -19,6 +19,9 @@ notifications:
 services:
   - mssql2014
 
+install:
+  - git clone https://github.com/leonard-thieu/toofz-build.git Scripts
+
 before_build:
   - appveyor-retry nuget restore -DisableParallelProcessing
 build:
@@ -28,9 +31,9 @@ build:
 test_script:
   - ps: |
       & "$env:PROJECT.Tests\Attach-Database.ps1" -Instance '(local)\SQL2014'
-      .\Test-Project.ps1 -Assembly SqlBulkUpsert
+      .\Scripts\Test-Project.ps1 -Assembly SqlBulkUpsert
 after_test:
-  - ps: .\Submit-CodeCoverageResults.ps1
+  - ps: .\Scripts\Submit-CodeCoverageResults.ps1
 
 deploy_script:
-  - ps: .\Deploy-Project.ps1
+  - ps: .\Scripts\Deploy-NuGetPackage.ps1
