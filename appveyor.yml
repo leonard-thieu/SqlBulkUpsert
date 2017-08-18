@@ -5,10 +5,6 @@ configuration:
   - Release
 environment:
   PROJECT: SqlBulkUpsert
-  COVERALLS_REPO_TOKEN:
-    secure: BZtcZR6WzervWOhyop4GC7pKy4lVKug2S0J6IVgmWv0ylXTsup23yLD54HPz53Ua
-  COVERALLS_SERVICE_NAME: appveyor
-  COVERALLS_SERVICE_JOB_ID: '%APPVEYOR_JOB_ID%'
   SqlBulkUpsertTestConnectionString: Server=(local)\SQL2014;Database=SqlBulkUpsertTestDb;User ID=sa;Password=Password12!
 cache:
   - packages -> **\packages.config
@@ -24,6 +20,8 @@ install:
 
 before_build:
   - appveyor-retry nuget restore -DisableParallelProcessing
+  - choco install opencover.portable
+  - choco install codecov
 build:
   project: $(PROJECT).sln
   verbosity: minimal
@@ -31,9 +29,9 @@ build:
 test_script:
   - ps: |
       & "$env:PROJECT.Tests\Attach-Database.ps1" -Instance '(local)\SQL2014'
-      .\Scripts\Test-Project.ps1 -Assembly SqlBulkUpsert
+      .\Scripts\Test-Project.ps1
 after_test:
-  - ps: .\Scripts\Submit-CodeCoverageResults.ps1
+  - codecov --file results.xml
 
 deploy_script:
   - ps: .\Scripts\Deploy-NuGetPackage.ps1
