@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyVersion("2.1.0.0")]
+[assembly: AssemblyVersion("2.1.2.0")]
 
 [assembly: AssemblyCopyright("Copyright © 2011")]
 [assembly: AssemblyProduct("SqlBulkUpsert")]
