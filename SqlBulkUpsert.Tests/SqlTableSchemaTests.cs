@@ -14,18 +14,13 @@ namespace SqlBulkUpsert.Tests
         [TestMethod]
         public async Task RetrieveTableSchemaNotExist()
         {
+            // Arrange
             using (var connection = DatabaseHelper.CreateAndOpenConnection())
             {
-                // Arrange
-
-                // Act
-                var ex = await Record.ExceptionAsync(() =>
+                await Assert.ThrowsExceptionAsync<InvalidOperationException>(() =>
                 {
                     return SqlTableSchema.LoadFromDatabaseAsync(connection, "DoesNotExist", CancellationToken.None);
                 });
-
-                // Assert
-                Assert.IsInstanceOfType(ex, typeof(Exception));
             }
         }
 
