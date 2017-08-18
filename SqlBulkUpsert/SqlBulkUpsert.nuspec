@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <package>
-    <metadata>
-        <id>toofz.SqlBulkUpsert</id>
-        <version>2.1.0</version>
-        <title>SqlBulkUpsert</title>
-        <authors>Derek Fowler, Leonard Thieu</authors>
-        <owners>Leonard Thieu</owners>
-        <projectUrl>https://github.com/leonard-thieu/SqlBulkUpsert</projectUrl>
-        <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>Wrapper around SqlBulkCopy for upserting multiple rows.</description>
-        <tags>sql bulk upsert</tags>
-    </metadata>
+  <metadata>
+    <id>toofz.SqlBulkUpsert</id>
+    <version>2.1.0</version>
+    <title>SqlBulkUpsert</title>
+    <authors>Derek Fowler, Leonard Thieu</authors>
+    <owners>Leonard Thieu</owners>
+    <projectUrl>https://github.com/leonard-thieu/SqlBulkUpsert</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Wrapper around SqlBulkCopy for upserting multiple rows.</description>
+    <tags>sql bulk upsert</tags>
+  </metadata>
 </package>
