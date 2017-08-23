@@ -39,7 +39,7 @@ namespace SqlBulkUpsert
             sb.AppendLine();
             sb.AppendLine(CommandText);
 
-            return sb.ToString();
+            return sb.ToString().Trim();
         }
     }
 }

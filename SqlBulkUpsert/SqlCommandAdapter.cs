@@ -8,24 +8,31 @@ namespace SqlBulkUpsert
     /// <summary>
     /// Wraps an instance of <see cref="SqlCommand"/> to provide more detailed error information.
     /// </summary>
-    internal sealed class SqlCommandWrapper : IDisposable
+    sealed class SqlCommandAdapter : IDisposable
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SqlCommandWrapper"/> class.
+        /// Creates and returns an instance of <see cref="SqlCommandWrapper"/> that wraps a <see cref="SqlCommand"/> that is
+        /// associated with the <see cref="SqlConnection"/>.
         /// </summary>
-        /// <param name="command">The <see cref="SqlCommand"/> to wrap.</param>
+        /// <param name="connection">The <see cref="SqlConnection"/> to create the command for.</param>
+        /// <returns>An instance of <see cref="SqlCommandWrapper"/> that wraps a <see cref="SqlCommand"/>.</returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="command"/> is null.
+        /// <paramref name="connection"/> is null.
         /// </exception>
-        public SqlCommandWrapper(SqlCommand command)
+        public static SqlCommandAdapter FromConnection(SqlConnection connection)
         {
-            if (command == null)
-                throw new ArgumentNullException(nameof(command));
+            if (connection == null)
+                throw new ArgumentNullException(nameof(connection));
 
+            return new SqlCommandAdapter(connection.CreateCommand());
+        }
+
+        SqlCommandAdapter(SqlCommand command)
+        {
             this.command = command;
         }
 
-        private readonly SqlCommand command;
+        readonly SqlCommand command;
 
         /// <summary>
         /// Gets or sets the Transact-SQL statement, table name or stored procedure to execute at the data source.
@@ -88,10 +95,10 @@ namespace SqlBulkUpsert
 
         #region IDisposable Members
 
-        private bool disposed;
+        bool disposed;
 
         /// <summary>
-        /// Releases all resources used by the <see cref="SqlCommandWrapper"/>.
+        /// Releases all resources used by the <see cref="SqlCommandAdapter"/>.
         /// </summary>
         public void Dispose()
         {
@@ -99,7 +106,7 @@ namespace SqlBulkUpsert
             GC.SuppressFinalize(this);
         }
 
-        private void Dispose(bool disposing)
+        void Dispose(bool disposing)
         {
             if (disposed)
                 return;
