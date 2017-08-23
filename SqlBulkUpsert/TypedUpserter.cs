@@ -13,23 +13,18 @@ namespace SqlBulkUpsert
     {
         public TypedUpserter(SqlTableSchema targetTableSchema, ColumnMappings<T> columnMappings)
         {
-            if (targetTableSchema == null)
-                throw new ArgumentNullException(nameof(targetTableSchema));
-            if (columnMappings == null)
-                throw new ArgumentNullException(nameof(columnMappings));
-
-            this.targetTableSchema = targetTableSchema;
-            this.columnMappings = columnMappings;
+            this.targetTableSchema = targetTableSchema ?? throw new ArgumentNullException(nameof(targetTableSchema));
+            this.columnMappings = columnMappings ?? throw new ArgumentNullException(nameof(columnMappings));
         }
 
-        private readonly SqlTableSchema targetTableSchema;
-        private readonly ColumnMappings<T> columnMappings;
+        readonly SqlTableSchema targetTableSchema;
+        readonly ColumnMappings<T> columnMappings;
 
         public async Task InsertAsync(SqlConnection connection, IEnumerable<T> items, IProgress<long> progress)
         {
             var cancellationToken = CancellationToken.None;
 
-            using (var command = connection.CreateWrappedCommand())
+            using (var command = SqlCommandAdapter.FromConnection(connection))
             {
                 command.CommandText = Invariant("TRUNCATE TABLE {0};", targetTableSchema.TableName);
                 await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
@@ -54,7 +49,7 @@ namespace SqlBulkUpsert
             }
         }
 
-        private async Task BulkCopyAsync(SqlConnection connection, string tableName, IDataReader data, CancellationToken cancellationToken)
+        async Task BulkCopyAsync(SqlConnection connection, string tableName, IDataReader data, CancellationToken cancellationToken)
         {
             using (var copy = new SqlBulkCopy(connection, SqlBulkCopyOptions.TableLock, null))
             {

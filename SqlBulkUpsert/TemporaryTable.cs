@@ -6,13 +6,13 @@ using static SqlBulkUpsert.Util;
 
 namespace SqlBulkUpsert
 {
-    internal sealed class TemporaryTable : IDisposable
+    sealed class TemporaryTable : IDisposable
     {
         public static async Task<TemporaryTable> CreateAsync(SqlConnection connection, string targetTableName, CancellationToken cancellationToken)
         {
             var table = new TemporaryTable(connection, targetTableName);
 
-            using (var command = connection.CreateWrappedCommand())
+            using (var command = SqlCommandAdapter.FromConnection(connection))
             {
                 command.CommandText = Invariant("SELECT TOP 0 * INTO [{0}] FROM [{1}];", table.Name, targetTableName);
                 await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
@@ -21,7 +21,7 @@ namespace SqlBulkUpsert
             return table;
         }
 
-        private TemporaryTable(SqlConnection connection, string targetTableName)
+        TemporaryTable(SqlConnection connection, string targetTableName)
         {
             Name = Invariant("#{0}", targetTableName);
 
@@ -29,14 +29,14 @@ namespace SqlBulkUpsert
             this.targetTableName = targetTableName;
         }
 
-        private readonly SqlConnection connection;
-        private readonly string targetTableName;
+        readonly SqlConnection connection;
+        readonly string targetTableName;
 
         public string Name { get; }
 
         public Task<int> MergeAsync(SqlTableSchema targetTableSchema, bool updateOnMatch, CancellationToken cancellationToken, string sourceSearchCondition = null)
         {
-            using (var command = connection.CreateWrappedCommand())
+            using (var command = SqlCommandAdapter.FromConnection(connection))
             {
                 var mergeCommand = new MergeCommand(Name, targetTableSchema, updateOnMatch, sourceSearchCondition);
                 command.CommandText = mergeCommand.ToString();
@@ -47,7 +47,7 @@ namespace SqlBulkUpsert
 
         #region IDisposable Members
 
-        private bool disposed;
+        bool disposed;
 
         public void Dispose()
         {
@@ -55,7 +55,7 @@ namespace SqlBulkUpsert
             GC.SuppressFinalize(this);
         }
 
-        private void Dispose(bool disposing)
+        void Dispose(bool disposing)
         {
             if (disposed)
                 return;
@@ -65,7 +65,7 @@ namespace SqlBulkUpsert
                 // Drops non-temporary "temporary" tables
                 if (Name != null && !Name.StartsWith("#", StringComparison.OrdinalIgnoreCase))
                 {
-                    using (var command = connection.CreateWrappedCommand())
+                    using (var command = SqlCommandAdapter.FromConnection(connection))
                     {
                         command.CommandText = Invariant("DROP TABLE [{0}];", Name);
                         command.ExecuteNonQuery();

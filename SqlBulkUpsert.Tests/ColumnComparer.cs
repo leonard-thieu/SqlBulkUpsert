@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SqlBulkUpsert.Tests
 {
-    class ColumnComparer : EqualityComparer<Column>, IComparer
+    sealed class ColumnComparer : EqualityComparer<Column>, IComparer
     {
         public int Compare(object x, object y)
         {

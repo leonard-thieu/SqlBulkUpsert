@@ -52,8 +52,7 @@
     <Compile Include="NumericColumn.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SqlCommandException.cs" />
-    <Compile Include="SqlCommandWrapper.cs" />
-    <Compile Include="SqlConnectionExtensions.cs" />
+    <Compile Include="SqlCommandAdapter.cs" />
     <Compile Include="SqlTableSchema.cs" />
     <Compile Include="StringBuilderExtensions.cs" />
     <Compile Include="TemporaryTable.cs" />
