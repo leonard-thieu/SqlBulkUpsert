@@ -21,11 +21,9 @@ services:
 
 install:
   - git clone https://github.com/leonard-thieu/toofz-build.git Scripts
-
+  
 before_build:
-  - appveyor-retry nuget restore -DisableParallelProcessing
-  - choco install opencover.portable
-  - choco install codecov
+  - appveyor-retry nuget restore -Verbosity quiet
 build:
   project: $(PROJECT).sln
   verbosity: minimal
@@ -35,7 +33,7 @@ test_script:
       & "$env:PROJECT.Tests\Attach-Database.ps1" -Instance '(local)\SQL2014'
       .\Scripts\Test-Project.ps1
 after_test:
-  - codecov --file results.xml
+  - ps: .\Scripts\Submit-CodeCoverageResults.ps1
 
 deploy_script:
   - ps: .\Scripts\Deploy-NuGetPackage.ps1
