@@ -1,5 +1,4 @@
 ﻿using System.Data;
-using static SqlBulkUpsert.Util;
 
 namespace SqlBulkUpsert
 {
@@ -43,7 +42,7 @@ namespace SqlBulkUpsert
             {
                 case "datetimeoffset":
                 case "datetime2":
-                    return Invariant("{0}({1})", DataType, Precision);
+                    return $"{DataType}({Precision})";
             }
             return base.ToFullDataTypeString();
         }

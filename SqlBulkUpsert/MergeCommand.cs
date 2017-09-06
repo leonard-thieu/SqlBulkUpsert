@@ -1,29 +1,27 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
-using static SqlBulkUpsert.Util;
 
 namespace SqlBulkUpsert
 {
-    internal sealed class MergeCommand
+    sealed class MergeCommand
     {
-        public MergeCommand(string tableSource, SqlTableSchema targetTableSchema, bool updateOnMatch, string sourceSearchCondition)
+        public MergeCommand(
+            string tableSource,
+            SqlTableSchema targetTableSchema,
+            bool updateOnMatch,
+            string sourceSearchCondition)
         {
-            if (tableSource == null)
-                throw new ArgumentNullException(nameof(tableSource));
-            if (targetTableSchema == null)
-                throw new ArgumentNullException(nameof(targetTableSchema));
-
-            this.targetTableSchema = targetTableSchema;
-            this.tableSource = tableSource;
+            this.targetTableSchema = targetTableSchema ?? throw new ArgumentNullException(nameof(targetTableSchema));
+            this.tableSource = tableSource ?? throw new ArgumentNullException(nameof(tableSource));
             this.updateOnMatch = updateOnMatch;
             this.sourceSearchCondition = sourceSearchCondition;
         }
 
-        private readonly SqlTableSchema targetTableSchema;
-        private readonly string tableSource;
-        private readonly bool updateOnMatch;
-        private readonly string sourceSearchCondition;
+        readonly SqlTableSchema targetTableSchema;
+        readonly string tableSource;
+        readonly bool updateOnMatch;
+        readonly string sourceSearchCondition;
 
         public override string ToString()
         {
@@ -68,7 +66,7 @@ namespace SqlBulkUpsert
             return sb.ToString();
         }
 
-        private string GetSearchCondition(string searchCondition)
+        string GetSearchCondition(string searchCondition)
         {
             if (searchCondition == null)
             {
@@ -76,32 +74,31 @@ namespace SqlBulkUpsert
             }
             else
             {
-                return Invariant("AND {0}", searchCondition);
+                return $"AND {searchCondition}";
             }
         }
 
-        private string GetMergeSearchCondition()
+        string GetMergeSearchCondition()
         {
-            if (targetTableSchema.PrimaryKeyColumns == null)
-                throw new ArgumentNullException(nameof(targetTableSchema.PrimaryKeyColumns));
-
             var columns = from c in targetTableSchema.PrimaryKeyColumns
-                          select Invariant("[Target].{0} = [Source].{0}", c.ToSelectListString());
+                          let column = c.ToSelectListString()
+                          select $"[Target].{column} = [Source].{column}";
 
             return string.Join(" AND ", columns);
         }
 
-        private string GetSetClause()
+        string GetSetClause()
         {
             // Exclude primary key and identity columns
             var columns = from c in targetTableSchema.Columns
                           where c.CanBeUpdated
-                          select Invariant("[Target].{0} = [Source].{0}", c.ToSelectListString());
+                          let column = c.ToSelectListString()
+                          select $"[Target].{column} = [Source].{column}";
 
             return string.Join(",\r\n            ", columns);
         }
 
-        private string GetValuesList()
+        string GetValuesList()
         {
             var columns = from c in targetTableSchema.Columns
                           where c.CanBeInserted

@@ -2,7 +2,6 @@
 using System.Data.SqlClient;
 using System.Threading;
 using System.Threading.Tasks;
-using static SqlBulkUpsert.Util;
 
 namespace SqlBulkUpsert
 {
@@ -14,7 +13,7 @@ namespace SqlBulkUpsert
 
             using (var command = SqlCommandAdapter.FromConnection(connection))
             {
-                command.CommandText = Invariant("SELECT TOP 0 * INTO [{0}] FROM [{1}];", table.Name, targetTableName);
+                command.CommandText = $"SELECT TOP 0 * INTO [{table.Name}] FROM [{targetTableName}];";
                 await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
             }
 
@@ -23,7 +22,7 @@ namespace SqlBulkUpsert
 
         TemporaryTable(SqlConnection connection, string targetTableName)
         {
-            Name = Invariant("#{0}", targetTableName);
+            Name = $"#{targetTableName}";
 
             this.connection = connection;
             this.targetTableName = targetTableName;
@@ -67,7 +66,7 @@ namespace SqlBulkUpsert
                 {
                     using (var command = SqlCommandAdapter.FromConnection(connection))
                     {
-                        command.CommandText = Invariant("DROP TABLE [{0}];", Name);
+                        command.CommandText = $"DROP TABLE [{Name}];";
                         command.ExecuteNonQuery();
                     }
                 }

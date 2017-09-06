@@ -17,9 +17,7 @@ namespace SqlBulkUpsert.Tests
             {
                 connection.Use("SqlBulkUpsertTestDb");
 
-                var targetSchema = await SqlTableSchema.LoadFromDatabaseAsync(connection, "TestUpsert", CancellationToken.None);
-
-                var columnMappings = new ColumnMappings<TestDto>
+                var columnMappings = new ColumnMappings<TestDto>("TestUpsert")
                 {
                     { "key_part_1", d => d.KeyPart1 },
                     { "key_part_2", d => d.KeyPart2 },
@@ -28,7 +26,7 @@ namespace SqlBulkUpsert.Tests
                     { "nullable_datetimeoffset", d => d.Date },
                 };
 
-                var upserter = new TypedUpserter<TestDto>(targetSchema, columnMappings);
+                var upserter = new TypedUpserter<TestDto>(columnMappings);
 
                 var items = new List<TestDto>();
 
@@ -38,7 +36,7 @@ namespace SqlBulkUpsert.Tests
                     {
                         KeyPart1 = "TEST",
                         KeyPart2 = (short)i,
-                        Text = String.Format("some text here {0}", i),
+                        Text = $"some text here {i}",
                         Number = i,
                         Date = new DateTimeOffset(new DateTime(2010, 11, 14, 12, 0, 0), TimeSpan.FromHours(i)),
                     });

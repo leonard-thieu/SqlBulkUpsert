@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using static SqlBulkUpsert.Util;
 
 namespace SqlBulkUpsert
 {
@@ -68,10 +67,7 @@ namespace SqlBulkUpsert
         public bool CanBeInserted { get; set; } = true;
         public bool CanBeUpdated { get; set; } = true;
 
-        public virtual Column Clone()
-        {
-            return CopyTo(new Column());
-        }
+        public virtual Column Clone() => CopyTo(new Column());
 
         public virtual Column CopyTo(Column column)
         {
@@ -98,20 +94,16 @@ namespace SqlBulkUpsert
                 DataType == other.DataType;
         }
 
-        public string ToSelectListString()
-        {
-            return Invariant("[{0}]", Name);
-        }
+        public string ToSelectListString() => $"[{Name}]";
 
         public virtual string ToColumnDefinitionString()
         {
-            return Invariant("{0} {1} {2}NULL", ToSelectListString(), ToFullDataTypeString(), Nullable ? "" : "NOT ");
+            return Nullable ?
+                $"{ToSelectListString()} {ToFullDataTypeString()} NULL" :
+                $"{ToSelectListString()} {ToFullDataTypeString()} NOT NULL";
         }
 
-        public virtual string ToFullDataTypeString()
-        {
-            return DataType;
-        }
+        public virtual string ToFullDataTypeString() => DataType;
 
         protected virtual void Populate(IDataReader sqlDataReader)
         {

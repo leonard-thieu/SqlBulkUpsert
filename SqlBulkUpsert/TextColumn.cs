@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Data;
 using System.Globalization;
-using static SqlBulkUpsert.Util;
 
 namespace SqlBulkUpsert
 {
@@ -43,11 +42,11 @@ namespace SqlBulkUpsert
                 case "varchar":
                 case "nchar":
                 case "nvarchar":
-                    return Invariant("{0}({1})", DataType, HandleMax(CharLength));
+                    return $"{DataType}({HandleMax(CharLength)})";
 
                 case "binary":
                 case "varbinary":
-                    return Invariant("{0}({1})", DataType, HandleMax(ByteLength));
+                    return $"{DataType}({HandleMax(ByteLength)})";
 
                 default:
                     return base.ToFullDataTypeString();

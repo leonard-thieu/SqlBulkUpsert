@@ -7,7 +7,7 @@ namespace SqlBulkUpsert
     /// <summary>
     /// Contains extension methods for <see cref="StringBuilder"/>.
     /// </summary>
-    internal static class StringBuilderExtensions
+    static class StringBuilderExtensions
     {
         public static void AppendFormatLine(this StringBuilder sb, string format, params object[] args)
         {

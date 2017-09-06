@@ -62,7 +62,6 @@
     <Compile Include="TextColumn.cs" />
     <Compile Include="TypedDataReader.cs" />
     <Compile Include="TypedUpserter.cs" />
-    <Compile Include="Util.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

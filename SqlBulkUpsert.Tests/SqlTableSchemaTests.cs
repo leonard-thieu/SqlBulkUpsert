@@ -393,7 +393,7 @@ namespace SqlBulkUpsert.Tests
             var cmdText = schema.ToCreateTableCommandText();
 
             // Assert
-            Assert.AreEqual("CREATE TABLE TestUpsert ([first] int NOT NULL, [second] ntext NULL, [third] datetime2(4) NOT NULL);", cmdText);
+            Assert.AreEqual("CREATE TABLE [TestUpsert] ([first] int NOT NULL, [second] ntext NULL, [third] datetime2(4) NOT NULL);", cmdText);
         }
 
         [TestMethod]
@@ -432,7 +432,7 @@ namespace SqlBulkUpsert.Tests
             var cmdText = schema.ToDropTableCommandText();
 
             // Assert
-            Assert.AreEqual("DROP TABLE TestUpsert;", cmdText);
+            Assert.AreEqual("DROP TABLE [TestUpsert];", cmdText);
         }
     }
 }
