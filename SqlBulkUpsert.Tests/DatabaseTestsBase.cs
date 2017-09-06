@@ -4,16 +4,16 @@ namespace SqlBulkUpsert.Tests
 {
     public abstract class DatabaseTestsBase
     {
-        [ClassInitialize]
-        public void Setup()
+        [TestInitialize]
+        public void TestInitialize()
         {
             DatabaseHelper.RefreshSchema();
         }
 
         [TestCleanup]
-        public void TearDown()
+        public void TestCleanup()
         {
-            DatabaseHelper.ExecuteCommands("TRUNCATE TABLE [TestUpsert];");
+            DatabaseHelper.DropDatabase();
         }
     }
 }

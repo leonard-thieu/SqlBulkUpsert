@@ -234,9 +234,11 @@ namespace SqlBulkUpsert.Tests
         [TestMethod]
         public async Task RetrieveTableSchema()
         {
+            // Arrange
             using (var connection = DatabaseHelper.CreateAndOpenConnection())
             {
-                // Arrange
+                connection.Use("SqlBulkUpsertTestDb");
+
                 var expectedColumns = new List<Column>
                 {
                     new TextColumn
@@ -432,6 +434,5 @@ namespace SqlBulkUpsert.Tests
             // Assert
             Assert.AreEqual("DROP TABLE TestUpsert;", cmdText);
         }
-
     }
 }

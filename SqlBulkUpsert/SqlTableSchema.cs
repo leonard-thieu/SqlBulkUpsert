@@ -24,7 +24,9 @@ namespace SqlBulkUpsert
 
             using (var sqlCommand = connection.CreateCommand())
             {
-                sqlCommand.CommandText = @"
+                sqlCommand.CommandText = $@"
+USE [{connection.Database}];
+
 -- Check table exists
 SELECT *
 FROM INFORMATION_SCHEMA.TABLES
