@@ -61,11 +61,9 @@ namespace SqlBulkUpsert.Tests.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 
-        ///USE [master]
+        ///   Looks up a localized string similar to USE [master]
         ///GO
         ///
-        ////****** Object:  Database [SqlBulkUpsertTestDb]    Script Date: 02/10/2011 22:47:12 ******/
         ///IF  EXISTS (SELECT name FROM sys.databases WHERE name = N&apos;SqlBulkUpsertTestDb&apos;)
         ///DROP DATABASE [SqlBulkUpsertTestDb]
         ///GO
@@ -73,31 +71,44 @@ namespace SqlBulkUpsert.Tests.Properties {
         ///USE [master]
         ///GO
         ///
-        ////****** Object:  Database [SqlBulkUpsertTestDb]    Script Date: 02/10/2011 22:47:12 ******/
         ///CREATE DATABASE [SqlBulkUpsertTestDb]
         ///GO
         ///
         ///USE [SqlBulkUpsertTestDb]
         ///GO
         ///
-        ////****** Object:  Table [dbo].[TestUpsert]    Script Date: 02/10/2011 22:48:06 **** [rest of string was truncated]&quot;;.
+        ///IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N&apos;[dbo].[TestUpsert]&apos;) AND type in (N&apos;U&apos;))
+        ///DROP TABLE [dbo].[TestUpsert]
+        ///GO
+        ///
+        ///USE [SqlBulkUpsertTestDb]
+        ///GO
+        ///
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///CREATE TABLE [dbo].[TestUpsert](        /// [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string DatabaseSchemaRefresh {
+        internal static string CreateDatabase {
             get {
-                return ResourceManager.GetString("DatabaseSchemaRefresh", resourceCulture);
+                return ResourceManager.GetString("CreateDatabase", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to USE [SqlBulkUpsertTestDb]
+        ///   Looks up a localized string similar to USE [master]
         ///GO
-        ////****** Object:  Table [dbo].[TestUpsert]    Script Date: 05/08/2011 02:35:07 ******/
-        ///INSERT [dbo].[TestUpsert] ([key_part_1], [key_part_2], [nullable_text], [nullable_number], [nullable_datetimeoffset], [nullable_money], [nullable_varbinary], [nullable_image], [nullable_xml]) VALUES (N&apos;TEST&apos;, 1, N&apos;some text here 1&apos;, 11, NULL, NULL, NULL, NULL, NULL)
-        ///INSERT [dbo].[TestUpsert] ([key_part_1], [key_part_2], [nullable_text], [nullable_number], [nullable_datetimeoffset], [nullabl [rest of string was truncated]&quot;;.
+        ///
+        ///DROP DATABASE [SqlBulkUpsertTestDb]
+        ///GO
+        ///.
         /// </summary>
-        internal static string PopulateTable {
+        internal static string DropDatabase {
             get {
-                return ResourceManager.GetString("PopulateTable", resourceCulture);
+                return ResourceManager.GetString("DropDatabase", resourceCulture);
             }
         }
     }

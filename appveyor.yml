@@ -31,9 +31,7 @@ build:
   verbosity: minimal
 
 test_script:
-  - ps: |
-      & "$env:PROJECT.Tests\Attach-Database.ps1" -Instance '(local)\SQL2014'
-      .\Scripts\Test-Project.ps1
+  - ps: .\Scripts\Test-Project.ps1
 after_test:
   - ps: .\Scripts\Submit-CodeCoverageResults.ps1
 

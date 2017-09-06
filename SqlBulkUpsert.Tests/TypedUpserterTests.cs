@@ -12,9 +12,11 @@ namespace SqlBulkUpsert.Tests
         [TestMethod]
         public async Task EndToEnd()
         {
+            // Arrange
             using (var connection = DatabaseHelper.CreateAndOpenConnection())
             {
-                // Arrange
+                connection.Use("SqlBulkUpsertTestDb");
+
                 var targetSchema = await SqlTableSchema.LoadFromDatabaseAsync(connection, "TestUpsert", CancellationToken.None);
 
                 var columnMappings = new ColumnMappings<TestDto>
