@@ -20,7 +20,9 @@ namespace SqlBulkUpsert
         readonly SqlTableSchema targetTableSchema;
         readonly ColumnMappings<T> columnMappings;
 
-        public async Task InsertAsync(SqlConnection connection, IEnumerable<T> items, IProgress<long> progress)
+        public async Task<int> InsertAsync(
+            SqlConnection connection,
+            IEnumerable<T> items)
         {
             var cancellationToken = CancellationToken.None;
 
@@ -32,24 +34,32 @@ namespace SqlBulkUpsert
 
             using (var dataReader = new TypedDataReader<T>(columnMappings, items))
             {
-                progress?.Report(items.Count());
                 await BulkCopyAsync(connection, targetTableSchema.TableName, dataReader, cancellationToken).ConfigureAwait(false);
+
+                return items.Count();
             }
         }
 
-        public async Task UpsertAsync(SqlConnection connection, IEnumerable<T> items, IProgress<long> progress, bool updateOnMatch, CancellationToken cancellationToken)
+        public async Task<int> UpsertAsync(
+            SqlConnection connection,
+            IEnumerable<T> items,
+            bool updateOnMatch,
+            CancellationToken cancellationToken)
         {
             using (var tempTable = await TemporaryTable.CreateAsync(connection, targetTableSchema.TableName, cancellationToken).ConfigureAwait(false))
             using (var dataReader = new TypedDataReader<T>(columnMappings, items))
             {
                 await BulkCopyAsync(connection, tempTable.Name, dataReader, cancellationToken).ConfigureAwait(false);
 
-                var rows = await tempTable.MergeAsync(targetTableSchema, updateOnMatch, cancellationToken).ConfigureAwait(false);
-                progress?.Report(rows);
+                return await tempTable.MergeAsync(targetTableSchema, updateOnMatch, cancellationToken).ConfigureAwait(false);
             }
         }
 
-        async Task BulkCopyAsync(SqlConnection connection, string tableName, IDataReader data, CancellationToken cancellationToken)
+        async Task BulkCopyAsync(
+            SqlConnection connection,
+            string tableName,
+            IDataReader data,
+            CancellationToken cancellationToken)
         {
             using (var copy = new SqlBulkCopy(connection, SqlBulkCopyOptions.TableLock, null))
             {

@@ -43,7 +43,7 @@ namespace SqlBulkUpsert.Tests
                 }
 
                 // Act
-                await upserter.UpsertAsync(connection, items, null, false, CancellationToken.None);
+                await upserter.UpsertAsync(connection, items, false, CancellationToken.None);
 
                 // Assert
                 foreach (var testDto in items)
