@@ -70,7 +70,7 @@ namespace SqlBulkUpsert.Tests
                 var ex = new SqlCommandException(message, inner, commandText);
 
                 // Assert
-                AssertHelper.NormalizedAreEqual(@"SqlBulkUpsert.SqlCommandException: Exception of type 'SqlBulkUpsert.SqlCommandException' was thrown.
+                Assert.That.NormalizedAreEqual(@"SqlBulkUpsert.SqlCommandException: Exception of type 'SqlBulkUpsert.SqlCommandException' was thrown.
 
 myCommandText", ex.ToString());
             }
