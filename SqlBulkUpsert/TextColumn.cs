@@ -54,7 +54,7 @@ namespace SqlBulkUpsert
             }
         }
 
-        private static string HandleMax(int? val)
+        static string HandleMax(int? val)
         {
             if (!val.HasValue)
                 throw new InvalidOperationException("Expected column length.");
