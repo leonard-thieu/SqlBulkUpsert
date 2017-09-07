@@ -35,32 +35,32 @@ namespace SqlBulkUpsert
 
             var sb = new StringBuilder();
 
-            sb.AppendFormatLine("MERGE INTO [{0}] AS [Target]", targetTable);
-            sb.AppendFormatLine("USING [{0}] AS [Source]", tableSource);
-            sb.AppendFormatLine("    ON ({0})", mergeSearchCondition);
+            sb.AppendLine($"MERGE INTO [{targetTable}] AS [Target]");
+            sb.AppendLine($"USING [{tableSource}] AS [Source]");
+            sb.AppendLine($"    ON ({mergeSearchCondition})");
 
             if (updateOnMatch)
             {
-                sb.AppendFormatLine("WHEN MATCHED");
-                sb.AppendFormatLine("    THEN");
-                sb.AppendFormatLine("        UPDATE");
-                sb.AppendFormatLine("        SET {0}", setClause);
+                sb.AppendLine("WHEN MATCHED");
+                sb.AppendLine("    THEN");
+                sb.AppendLine("        UPDATE");
+                sb.AppendLine($"        SET {setClause}");
             }
 
-            sb.AppendFormatLine("WHEN NOT MATCHED");
-            sb.AppendFormatLine("    THEN");
-            sb.AppendFormatLine("        INSERT ({0})", columnList);
+            sb.AppendLine("WHEN NOT MATCHED");
+            sb.AppendLine("    THEN");
+            sb.AppendLine($"        INSERT ({columnList})");
 
             if (this.sourceSearchCondition == null)
             {
-                sb.AppendFormatLine("        VALUES ({0});", valuesList);
+                sb.AppendLine($"        VALUES ({valuesList});");
             }
             else
             {
-                sb.AppendFormatLine("        VALUES ({0})", valuesList);
-                sb.AppendFormatLine("WHEN NOT MATCHED BY SOURCE {0}", sourceSearchCondition);
-                sb.AppendFormatLine("    THEN");
-                sb.AppendFormatLine("        DELETE;");
+                sb.AppendLine($"        VALUES ({valuesList})");
+                sb.AppendLine($"WHEN NOT MATCHED BY SOURCE {sourceSearchCondition}");
+                sb.AppendLine("    THEN");
+                sb.AppendLine("        DELETE;");
             }
 
             return sb.ToString();
@@ -68,14 +68,9 @@ namespace SqlBulkUpsert
 
         string GetSearchCondition(string searchCondition)
         {
-            if (searchCondition == null)
-            {
-                return string.Empty;
-            }
-            else
-            {
-                return $"AND {searchCondition}";
-            }
+            return searchCondition == null ?
+                "" :
+                $"AND {searchCondition}";
         }
 
         string GetMergeSearchCondition()

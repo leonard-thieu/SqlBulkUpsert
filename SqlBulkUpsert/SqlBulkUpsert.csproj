@@ -67,7 +67,6 @@
     <Compile Include="SqlCommandException.cs" />
     <Compile Include="SqlCommandAdapter.cs" />
     <Compile Include="SqlTableSchema.cs" />
-    <Compile Include="StringBuilderExtensions.cs" />
     <Compile Include="TemporaryTable.cs" />
     <Compile Include="TextColumn.cs" />
     <Compile Include="TypedDataReader.cs" />
