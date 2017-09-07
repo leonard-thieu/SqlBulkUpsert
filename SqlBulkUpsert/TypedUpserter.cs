@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SqlBulkUpsert
 {
-    public sealed class TypedUpserter<T>
+    public sealed class TypedUpserter<T> : ITypedUpserter<T>
     {
         public TypedUpserter(ColumnMappings<T> columnMappings)
         {
