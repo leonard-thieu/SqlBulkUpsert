@@ -43,6 +43,7 @@ namespace SqlBulkUpsert
             set => command.CommandText = value;
         }
 
+        /// <summary>
         /// Gets the <see cref="SqlParameterCollection"/>.
         /// </summary>
         public SqlParameterCollection Parameters
