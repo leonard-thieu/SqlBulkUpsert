@@ -9,26 +9,21 @@ namespace SqlBulkUpsert
         public MergeCommand(
             string tableSource,
             SqlTableSchema targetTableSchema,
-            bool updateOnMatch,
-            string sourceSearchCondition)
+            bool updateOnMatch)
         {
             this.targetTableSchema = targetTableSchema ?? throw new ArgumentNullException(nameof(targetTableSchema));
             this.tableSource = tableSource ?? throw new ArgumentNullException(nameof(tableSource));
             this.updateOnMatch = updateOnMatch;
-            this.sourceSearchCondition = sourceSearchCondition;
         }
 
         readonly SqlTableSchema targetTableSchema;
         readonly string tableSource;
         readonly bool updateOnMatch;
-        readonly string sourceSearchCondition;
 
         public override string ToString()
         {
             var targetTable = targetTableSchema.TableName;
-            var tableSource = this.tableSource;
             var mergeSearchCondition = GetMergeSearchCondition();
-            var sourceSearchCondition = GetSearchCondition(this.sourceSearchCondition);
             var setClause = GetSetClause();
             var columnList = GetValuesList();
             var valuesList = GetValuesList();
@@ -50,27 +45,9 @@ namespace SqlBulkUpsert
             sb.AppendLine("WHEN NOT MATCHED");
             sb.AppendLine("    THEN");
             sb.AppendLine($"        INSERT ({columnList})");
-
-            if (this.sourceSearchCondition == null)
-            {
-                sb.AppendLine($"        VALUES ({valuesList});");
-            }
-            else
-            {
-                sb.AppendLine($"        VALUES ({valuesList})");
-                sb.AppendLine($"WHEN NOT MATCHED BY SOURCE {sourceSearchCondition}");
-                sb.AppendLine("    THEN");
-                sb.AppendLine("        DELETE;");
-            }
+            sb.AppendLine($"        VALUES ({valuesList});");
 
             return sb.ToString();
-        }
-
-        string GetSearchCondition(string searchCondition)
-        {
-            return searchCondition == null ?
-                "" :
-                $"AND {searchCondition}";
         }
 
         string GetMergeSearchCondition()

@@ -69,7 +69,7 @@ namespace SqlBulkUpsert
 
                 var targetTableSchema = await SqlTableSchema.LoadFromDatabaseAsync(connection, columnMappings.TableName, cancellationToken).ConfigureAwait(false);
 
-                return await tempTable.MergeAsync(targetTableSchema, updateOnMatch, cancellationToken: cancellationToken).ConfigureAwait(false);
+                return await tempTable.MergeAsync(targetTableSchema, updateOnMatch, cancellationToken).ConfigureAwait(false);
             }
         }
 
