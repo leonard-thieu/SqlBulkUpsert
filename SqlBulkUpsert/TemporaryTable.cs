@@ -36,18 +36,17 @@ namespace SqlBulkUpsert
 
         public string Name { get; }
 
-        public Task<int> MergeAsync(
+        public async Task<int> MergeAsync(
             SqlTableSchema targetTableSchema,
             bool updateOnMatch,
-            CancellationToken cancellationToken,
-            string sourceSearchCondition = null)
+            CancellationToken cancellationToken = default(CancellationToken))
         {
             using (var command = SqlCommandAdapter.FromConnection(connection))
             {
-                var mergeCommand = new MergeCommand(Name, targetTableSchema, updateOnMatch, sourceSearchCondition);
+                var mergeCommand = new MergeCommand(Name, targetTableSchema, updateOnMatch);
                 command.CommandText = mergeCommand.ToString();
 
-                return command.ExecuteNonQueryAsync(cancellationToken);
+                return await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
             }
         }
 

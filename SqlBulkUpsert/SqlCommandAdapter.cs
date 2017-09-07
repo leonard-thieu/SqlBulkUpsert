@@ -39,20 +39,16 @@ namespace SqlBulkUpsert
         /// </summary>
         public string CommandText
         {
-            get
-            {
-                if (disposed)
-                    throw new ObjectDisposedException(GetType().Name);
+            get => command.CommandText;
+            set => command.CommandText = value;
+        }
 
-                return command.CommandText;
-            }
-            set
-            {
-                if (disposed)
-                    throw new ObjectDisposedException(GetType().Name);
-
-                command.CommandText = value;
-            }
+        /// <summary>
+        /// Gets the <see cref="SqlParameterCollection"/>.
+        /// </summary>
+        public SqlParameterCollection Parameters
+        {
+            get => command.Parameters;
         }
 
         /// <summary>
@@ -61,9 +57,6 @@ namespace SqlBulkUpsert
         /// <returns>The number of rows affected.</returns>
         public int ExecuteNonQuery()
         {
-            if (disposed)
-                throw new ObjectDisposedException(GetType().Name);
-
             try
             {
                 return command.ExecuteNonQuery();
@@ -80,9 +73,6 @@ namespace SqlBulkUpsert
         /// <returns>The number of rows affected.</returns>
         public Task<int> ExecuteNonQueryAsync(CancellationToken cancellationToken)
         {
-            if (disposed)
-                throw new ObjectDisposedException(GetType().Name);
-
             try
             {
                 return command.ExecuteNonQueryAsync(cancellationToken);
@@ -92,6 +82,17 @@ namespace SqlBulkUpsert
                 throw new SqlCommandException(ex.Message, ex, CommandText);
             }
         }
+
+        /// <summary>
+        /// Executes the query asynchronously and returns the first column of the first row
+        /// in the result set returned by the query. Additional columns or rows are ignored.
+        /// 
+        /// The cancellation token can be used to request that the operation be abandoned before
+        /// the command timeout elapses. Exceptions will be reported via the returned Task object.
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation instruction.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        public Task<object> ExecuteScalarAsync(CancellationToken cancellationToken) => command.ExecuteScalarAsync(cancellationToken);
 
         #region IDisposable Members
 
