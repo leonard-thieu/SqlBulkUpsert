@@ -39,20 +39,8 @@ namespace SqlBulkUpsert
         /// </summary>
         public string CommandText
         {
-            get
-            {
-                if (disposed)
-                    throw new ObjectDisposedException(GetType().Name);
-
-                return command.CommandText;
-            }
-            set
-            {
-                if (disposed)
-                    throw new ObjectDisposedException(GetType().Name);
-
-                command.CommandText = value;
-            }
+            get => command.CommandText;
+            set => command.CommandText = value;
         }
 
         /// Gets the <see cref="SqlParameterCollection"/>.
@@ -68,9 +56,6 @@ namespace SqlBulkUpsert
         /// <returns>The number of rows affected.</returns>
         public int ExecuteNonQuery()
         {
-            if (disposed)
-                throw new ObjectDisposedException(GetType().Name);
-
             try
             {
                 return command.ExecuteNonQuery();
@@ -87,9 +72,6 @@ namespace SqlBulkUpsert
         /// <returns>The number of rows affected.</returns>
         public Task<int> ExecuteNonQueryAsync(CancellationToken cancellationToken)
         {
-            if (disposed)
-                throw new ObjectDisposedException(GetType().Name);
-
             try
             {
                 return command.ExecuteNonQueryAsync(cancellationToken);
