@@ -4,7 +4,7 @@ using System.Globalization;
 
 namespace SqlBulkUpsert
 {
-    public sealed class TextColumn : Column
+    sealed class TextColumn : Column
     {
         public int? CharLength { get; set; }
         public int? ByteLength { get; set; }

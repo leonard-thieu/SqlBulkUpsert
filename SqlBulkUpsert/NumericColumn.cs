@@ -2,7 +2,7 @@
 
 namespace SqlBulkUpsert
 {
-    public sealed class NumericColumn : Column
+    sealed class NumericColumn : Column
     {
         public int? Precision { get; set; }
         public int? Radix { get; set; }

@@ -3,7 +3,7 @@ using System.Data;
 
 namespace SqlBulkUpsert
 {
-    public class Column : IEquatable<Column>
+    class Column : IEquatable<Column>
     {
         public static Column CreateFromReader(IDataReader sqlDataReader)
         {

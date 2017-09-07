@@ -2,7 +2,7 @@
 
 namespace SqlBulkUpsert
 {
-    public sealed class DateColumn : Column
+    sealed class DateColumn : Column
     {
         public int? Precision { get; set; }
 
