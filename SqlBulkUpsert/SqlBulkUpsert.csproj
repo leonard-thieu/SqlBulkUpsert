@@ -52,6 +52,14 @@
     <Compile Include="DateColumn.cs" />
     <Compile Include="IDataRecordExtensions.cs" />
     <Compile Include="IEnumerableColumnExtensions.cs" />
+    <Compile Include="ISqlBulkCopy.cs" />
+    <Compile Include="SqlBulkCopyAdapter.cs">
+      <DependentUpon>ISqlBulkCopy.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ISqlConnection.cs" />
+    <Compile Include="SqlConnectionAdapter.cs">
+      <DependentUpon>ISqlConnection.cs</DependentUpon>
+    </Compile>
     <Compile Include="MergeCommand.cs" />
     <Compile Include="NumericColumn.cs" />
     <Compile Include="SqlCommandException.cs" />

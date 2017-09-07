@@ -7,7 +7,7 @@ namespace SqlBulkUpsert.Tests
         [TestInitialize]
         public void TestInitialize()
         {
-            DatabaseHelper.RefreshSchema();
+            DatabaseHelper.CreateDatabase();
         }
 
         [TestCleanup]

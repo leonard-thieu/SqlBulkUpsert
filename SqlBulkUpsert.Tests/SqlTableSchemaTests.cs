@@ -17,9 +17,13 @@ namespace SqlBulkUpsert.Tests
             // Arrange
             using (var connection = DatabaseHelper.CreateAndOpenConnection())
             {
+                // Act -> Assert
                 await Assert.ThrowsExceptionAsync<InvalidOperationException>(() =>
                 {
-                    return SqlTableSchema.LoadFromDatabaseAsync(connection, "DoesNotExist", CancellationToken.None);
+                    return SqlTableSchema.LoadFromDatabaseAsync(
+                        new SqlConnectionAdapter(connection),
+                        "DoesNotExist",
+                        CancellationToken.None);
                 });
             }
         }
@@ -223,10 +227,10 @@ namespace SqlBulkUpsert.Tests
             };
 
             // Act
-            var schema = await SqlTableSchema.LoadFromReaderAsync("TestUpsert", dataTableReader, CancellationToken.None);
+            var schema = await SqlTableSchema.LoadFromReaderAsync(Constants.TableName, dataTableReader, CancellationToken.None);
 
             // Assert 
-            Assert.AreEqual("TestUpsert", schema.TableName);
+            Assert.AreEqual(Constants.TableName, schema.TableName);
             CollectionAssert.AreEqual(expectedColumns, schema.Columns as ICollection, new ColumnComparer());
             CollectionAssert.AreEqual(expectedKeyColumns, schema.PrimaryKeyColumns as ICollection, new ColumnComparer());
         }
@@ -235,10 +239,8 @@ namespace SqlBulkUpsert.Tests
         public async Task RetrieveTableSchema()
         {
             // Arrange
-            using (var connection = DatabaseHelper.CreateAndOpenConnection())
+            using (var connection = DatabaseHelper.CreateAndOpenConnection(Constants.DatabaseName))
             {
-                connection.Use("SqlBulkUpsertTestDb");
-
                 var expectedColumns = new List<Column>
                 {
                     new TextColumn
@@ -348,10 +350,13 @@ namespace SqlBulkUpsert.Tests
                 };
 
                 // Act
-                SqlTableSchema schema = await SqlTableSchema.LoadFromDatabaseAsync(connection, "TestUpsert", CancellationToken.None);
+                SqlTableSchema schema = await SqlTableSchema.LoadFromDatabaseAsync(
+                    new SqlConnectionAdapter(connection),
+                    Constants.TableName,
+                    CancellationToken.None);
 
                 // Assert
-                Assert.AreEqual("TestUpsert", schema.TableName);
+                Assert.AreEqual(Constants.TableName, schema.TableName);
                 CollectionAssert.AreEqual(expectedColumns, schema.Columns as ICollection, new ColumnComparer());
                 CollectionAssert.AreEqual(expectedKeyColumns, schema.PrimaryKeyColumns as ICollection, new ColumnComparer());
             }
@@ -362,7 +367,7 @@ namespace SqlBulkUpsert.Tests
         {
             // Arrange
             var schema = new SqlTableSchema(
-                "TestUpsert",
+                Constants.TableName,
                 new List<Column>
                 {
                     new NumericColumn
@@ -393,7 +398,7 @@ namespace SqlBulkUpsert.Tests
             var cmdText = schema.ToCreateTableCommandText();
 
             // Assert
-            Assert.AreEqual("CREATE TABLE [TestUpsert] ([first] int NOT NULL, [second] ntext NULL, [third] datetime2(4) NOT NULL);", cmdText);
+            Assert.AreEqual($"CREATE TABLE [{Constants.TableName}] ([first] int NOT NULL, [second] ntext NULL, [third] datetime2(4) NOT NULL);", cmdText);
         }
 
         [TestMethod]
@@ -401,7 +406,7 @@ namespace SqlBulkUpsert.Tests
         {
             // Arrange
             var schema = new SqlTableSchema(
-                "TestUpsert",
+                Constants.TableName,
                 new List<Column>
                 {
                     new NumericColumn
@@ -432,7 +437,7 @@ namespace SqlBulkUpsert.Tests
             var cmdText = schema.ToDropTableCommandText();
 
             // Assert
-            Assert.AreEqual("DROP TABLE [TestUpsert];", cmdText);
+            Assert.AreEqual($"DROP TABLE [{Constants.TableName}];", cmdText);
         }
     }
 }
