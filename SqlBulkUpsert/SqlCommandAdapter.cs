@@ -14,7 +14,7 @@ namespace SqlBulkUpsert
         /// Creates and returns an instance of <see cref="SqlCommandAdapter"/> that wraps a <see cref="SqlCommand"/> that is
         /// associated with the <see cref="SqlConnection"/>.
         /// </summary>
-        /// <param name="connection">The <see cref="ISqlConnection"/> to create the command for.</param>
+        /// <param name="connection">The <see cref="SqlConnection"/> to create the command for.</param>
         /// <returns>An instance of <see cref="SqlCommandAdapter"/> that wraps a <see cref="SqlCommand"/>.</returns>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="connection"/> is null.
