@@ -41,7 +41,7 @@ namespace SqlBulkUpsert.Tests
             {
                 // Act
                 await upserter.UpsertAsync(
-                    new SqlBulkCopyAdapter(connection),
+                    connection,
                     items,
                     updateOnMatch: false);
 

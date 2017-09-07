@@ -21,7 +21,7 @@ namespace SqlBulkUpsert.Tests
                 await Assert.ThrowsExceptionAsync<InvalidOperationException>(() =>
                 {
                     return SqlTableSchema.LoadFromDatabaseAsync(
-                        new SqlConnectionAdapter(connection),
+                        connection,
                         "DoesNotExist",
                         CancellationToken.None);
                 });
@@ -351,7 +351,7 @@ namespace SqlBulkUpsert.Tests
 
                 // Act
                 SqlTableSchema schema = await SqlTableSchema.LoadFromDatabaseAsync(
-                    new SqlConnectionAdapter(connection),
+                    connection,
                     Constants.TableName,
                     CancellationToken.None);
 
