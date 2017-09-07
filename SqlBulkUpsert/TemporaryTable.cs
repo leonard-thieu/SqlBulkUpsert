@@ -1,40 +1,45 @@
 ﻿using System;
-using System.Data.SqlClient;
 using System.Threading;
 using System.Threading.Tasks;
-using static SqlBulkUpsert.Util;
 
 namespace SqlBulkUpsert
 {
     sealed class TemporaryTable : IDisposable
     {
-        public static async Task<TemporaryTable> CreateAsync(SqlConnection connection, string targetTableName, CancellationToken cancellationToken)
+        public static async Task<TemporaryTable> CreateAsync(
+            ISqlConnection connection,
+            string targetTableName,
+            CancellationToken cancellationToken)
         {
             var table = new TemporaryTable(connection, targetTableName);
 
             using (var command = SqlCommandAdapter.FromConnection(connection))
             {
-                command.CommandText = Invariant("SELECT TOP 0 * INTO [{0}] FROM [{1}];", table.Name, targetTableName);
+                command.CommandText = $"SELECT TOP 0 * INTO [{table.Name}] FROM [{targetTableName}];";
                 await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
             }
 
             return table;
         }
 
-        TemporaryTable(SqlConnection connection, string targetTableName)
+        TemporaryTable(ISqlConnection connection, string targetTableName)
         {
-            Name = Invariant("#{0}", targetTableName);
+            Name = $"#{targetTableName}";
 
             this.connection = connection;
             this.targetTableName = targetTableName;
         }
 
-        readonly SqlConnection connection;
+        readonly ISqlConnection connection;
         readonly string targetTableName;
 
         public string Name { get; }
 
-        public Task<int> MergeAsync(SqlTableSchema targetTableSchema, bool updateOnMatch, CancellationToken cancellationToken, string sourceSearchCondition = null)
+        public Task<int> MergeAsync(
+            SqlTableSchema targetTableSchema,
+            bool updateOnMatch,
+            CancellationToken cancellationToken,
+            string sourceSearchCondition = null)
         {
             using (var command = SqlCommandAdapter.FromConnection(connection))
             {
@@ -67,7 +72,7 @@ namespace SqlBulkUpsert
                 {
                     using (var command = SqlCommandAdapter.FromConnection(connection))
                     {
-                        command.CommandText = Invariant("DROP TABLE [{0}];", Name);
+                        command.CommandText = $"DROP TABLE [{Name}];";
                         command.ExecuteNonQuery();
                     }
                 }

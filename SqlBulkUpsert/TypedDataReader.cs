@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace SqlBulkUpsert
 {
-    internal sealed class TypedDataReader<T> : IDataReader
+    sealed class TypedDataReader<T> : IDataReader
     {
         public TypedDataReader(ColumnMappings<T> columnMappings, IEnumerable<T> items)
         {
@@ -21,31 +21,19 @@ namespace SqlBulkUpsert
             this.items = items.GetEnumerator();
         }
 
-        private readonly Dictionary<string, int> mappingLookup;
-        private readonly IList<Func<T, object>> mappingFuncs;
-        private readonly IEnumerator<T> items;
+        readonly Dictionary<string, int> mappingLookup;
+        readonly IList<Func<T, object>> mappingFuncs;
+        readonly IEnumerator<T> items;
 
         public void Dispose() { }
 
-        public object GetValue(int i)
-        {
-            return mappingFuncs[i](items.Current);
-        }
+        public object GetValue(int i) => mappingFuncs[i](items.Current);
 
-        public int GetOrdinal(string name)
-        {
-            return mappingLookup[name];
-        }
+        public int GetOrdinal(string name) => mappingLookup[name];
 
-        public int FieldCount
-        {
-            get { return mappingFuncs.Count; }
-        }
+        public int FieldCount => mappingFuncs.Count;
 
-        public bool Read()
-        {
-            return items.MoveNext();
-        }
+        public bool Read() => items.MoveNext();
 
         // Not used by SqlBulkCopy (satisfying interface only)
 

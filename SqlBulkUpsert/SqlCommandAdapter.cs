@@ -11,15 +11,15 @@ namespace SqlBulkUpsert
     sealed class SqlCommandAdapter : IDisposable
     {
         /// <summary>
-        /// Creates and returns an instance of <see cref="SqlCommandWrapper"/> that wraps a <see cref="SqlCommand"/> that is
-        /// associated with the <see cref="SqlConnection"/>.
+        /// Creates and returns an instance of <see cref="SqlCommandAdapter"/> that wraps a <see cref="SqlCommand"/> that is
+        /// associated with the <see cref="ISqlConnection"/>.
         /// </summary>
-        /// <param name="connection">The <see cref="SqlConnection"/> to create the command for.</param>
-        /// <returns>An instance of <see cref="SqlCommandWrapper"/> that wraps a <see cref="SqlCommand"/>.</returns>
+        /// <param name="connection">The <see cref="ISqlConnection"/> to create the command for.</param>
+        /// <returns>An instance of <see cref="SqlCommandAdapter"/> that wraps a <see cref="SqlCommand"/>.</returns>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="connection"/> is null.
         /// </exception>
-        public static SqlCommandAdapter FromConnection(SqlConnection connection)
+        public static SqlCommandAdapter FromConnection(ISqlConnection connection)
         {
             if (connection == null)
                 throw new ArgumentNullException(nameof(connection));

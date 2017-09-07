@@ -1,21 +1,17 @@
 ﻿using System;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.Linq;
+using System.Text.RegularExpressions;
 using SqlBulkUpsert.Tests.Properties;
 
 namespace SqlBulkUpsert.Tests
 {
     static class DatabaseHelper
     {
-        public static void RefreshSchema()
-        {
-            ExecuteCommands(Resources.CreateDatabase);
-        }
+        public static void CreateDatabase() => ExecuteCommands(Resources.CreateDatabase);
 
-        public static void DropDatabase()
-        {
-            ExecuteCommands(Resources.DropDatabase);
-        }
+        public static void DropDatabase() => ExecuteCommands(Resources.DropDatabase);
 
         /// <summary>
         /// Execute some SQL against the database
@@ -24,18 +20,34 @@ namespace SqlBulkUpsert.Tests
         static void ExecuteCommands(string sqlCommandText)
         {
             using (var connection = CreateAndOpenConnection())
+            using (var command = connection.CreateCommand())
             {
-                connection.ExecuteCommands(sqlCommandText);
+                var batches = Regex.Split(sqlCommandText, "(?:\r?\n)?GO(?:\r?\n)?", RegexOptions.IgnoreCase);
+                foreach (var batch in batches.Where(b => !string.IsNullOrWhiteSpace(b)))
+                {
+                    command.CommandText = batch;
+                    command.ExecuteNonQuery();
+                }
             }
         }
 
-        public static SqlConnection CreateAndOpenConnection()
+        public static SqlConnection CreateAndOpenConnection(string databaseName = null)
         {
             var connectionString =
                 Environment.GetEnvironmentVariable("SqlBulkUpsertTestConnectionString", EnvironmentVariableTarget.Machine) ??
                 ConfigurationManager.ConnectionStrings["SqlBulkUpsertTestConnectionString"].ConnectionString;
+
             var sqlConnection = new SqlConnection(connectionString);
             sqlConnection.Open();
+
+            if (databaseName != null)
+            {
+                using (var command = sqlConnection.CreateCommand())
+                {
+                    command.CommandText = $"USE [{databaseName}];";
+                    command.ExecuteNonQuery();
+                }
+            }
 
             return sqlConnection;
         }

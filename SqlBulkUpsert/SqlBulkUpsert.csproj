@@ -37,6 +37,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <DocumentationFile>bin\Release\SqlBulkUpsert.xml</DocumentationFile>
+    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -52,17 +54,23 @@
     <Compile Include="DateColumn.cs" />
     <Compile Include="IDataRecordExtensions.cs" />
     <Compile Include="IEnumerableColumnExtensions.cs" />
+    <Compile Include="ISqlBulkCopy.cs" />
+    <Compile Include="SqlBulkCopyAdapter.cs">
+      <DependentUpon>ISqlBulkCopy.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ISqlConnection.cs" />
+    <Compile Include="SqlConnectionAdapter.cs">
+      <DependentUpon>ISqlConnection.cs</DependentUpon>
+    </Compile>
     <Compile Include="MergeCommand.cs" />
     <Compile Include="NumericColumn.cs" />
     <Compile Include="SqlCommandException.cs" />
     <Compile Include="SqlCommandAdapter.cs" />
     <Compile Include="SqlTableSchema.cs" />
-    <Compile Include="StringBuilderExtensions.cs" />
     <Compile Include="TemporaryTable.cs" />
     <Compile Include="TextColumn.cs" />
     <Compile Include="TypedDataReader.cs" />
     <Compile Include="TypedUpserter.cs" />
-    <Compile Include="Util.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

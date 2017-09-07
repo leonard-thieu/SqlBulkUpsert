@@ -5,9 +5,9 @@ using System.Linq;
 namespace SqlBulkUpsert
 {
     /// <summary>
-    /// Contains extension methods for <see cref="IEnumerable{Column}"/>.
+    /// Contains extension methods for <see cref="IEnumerable{T}"/>.
     /// </summary>
-    internal static class IEnumerableColumnExtensions
+    static class IEnumerableColumnExtensions
     {
         public static string ToSelectListString(this IEnumerable<Column> columns)
         {

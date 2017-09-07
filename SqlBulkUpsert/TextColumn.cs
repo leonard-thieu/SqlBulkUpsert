@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Data;
 using System.Globalization;
-using static SqlBulkUpsert.Util;
 
 namespace SqlBulkUpsert
 {
-    public sealed class TextColumn : Column
+    sealed class TextColumn : Column
     {
         public int? CharLength { get; set; }
         public int? ByteLength { get; set; }
@@ -43,11 +42,11 @@ namespace SqlBulkUpsert
                 case "varchar":
                 case "nchar":
                 case "nvarchar":
-                    return Invariant("{0}({1})", DataType, HandleMax(CharLength));
+                    return $"{DataType}({HandleMax(CharLength)})";
 
                 case "binary":
                 case "varbinary":
-                    return Invariant("{0}({1})", DataType, HandleMax(ByteLength));
+                    return $"{DataType}({HandleMax(ByteLength)})";
 
                 default:
                     return base.ToFullDataTypeString();

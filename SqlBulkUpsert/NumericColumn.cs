@@ -1,9 +1,8 @@
 ﻿using System.Data;
-using static SqlBulkUpsert.Util;
 
 namespace SqlBulkUpsert
 {
-    public sealed class NumericColumn : Column
+    sealed class NumericColumn : Column
     {
         public int? Precision { get; set; }
         public int? Radix { get; set; }
@@ -52,11 +51,11 @@ namespace SqlBulkUpsert
             {
                 case "numeric":
                 case "decimal":
-                    return Invariant("{0}({1}, {2})", DataType, Precision, Scale);
+                    return $"{DataType}({Precision}, {Scale})";
 
                 case "float":
                 case "real":
-                    return Invariant("{0}({1})", DataType, Radix);
+                    return $"{DataType}({Radix})";
             }
 
             return base.ToFullDataTypeString();

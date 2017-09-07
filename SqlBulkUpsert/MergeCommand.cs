@@ -1,29 +1,27 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
-using static SqlBulkUpsert.Util;
 
 namespace SqlBulkUpsert
 {
-    internal sealed class MergeCommand
+    sealed class MergeCommand
     {
-        public MergeCommand(string tableSource, SqlTableSchema targetTableSchema, bool updateOnMatch, string sourceSearchCondition)
+        public MergeCommand(
+            string tableSource,
+            SqlTableSchema targetTableSchema,
+            bool updateOnMatch,
+            string sourceSearchCondition)
         {
-            if (tableSource == null)
-                throw new ArgumentNullException(nameof(tableSource));
-            if (targetTableSchema == null)
-                throw new ArgumentNullException(nameof(targetTableSchema));
-
-            this.targetTableSchema = targetTableSchema;
-            this.tableSource = tableSource;
+            this.targetTableSchema = targetTableSchema ?? throw new ArgumentNullException(nameof(targetTableSchema));
+            this.tableSource = tableSource ?? throw new ArgumentNullException(nameof(tableSource));
             this.updateOnMatch = updateOnMatch;
             this.sourceSearchCondition = sourceSearchCondition;
         }
 
-        private readonly SqlTableSchema targetTableSchema;
-        private readonly string tableSource;
-        private readonly bool updateOnMatch;
-        private readonly string sourceSearchCondition;
+        readonly SqlTableSchema targetTableSchema;
+        readonly string tableSource;
+        readonly bool updateOnMatch;
+        readonly string sourceSearchCondition;
 
         public override string ToString()
         {
@@ -37,71 +35,65 @@ namespace SqlBulkUpsert
 
             var sb = new StringBuilder();
 
-            sb.AppendFormatLine("MERGE INTO [{0}] AS [Target]", targetTable);
-            sb.AppendFormatLine("USING [{0}] AS [Source]", tableSource);
-            sb.AppendFormatLine("    ON ({0})", mergeSearchCondition);
+            sb.AppendLine($"MERGE INTO [{targetTable}] AS [Target]");
+            sb.AppendLine($"USING [{tableSource}] AS [Source]");
+            sb.AppendLine($"    ON ({mergeSearchCondition})");
 
             if (updateOnMatch)
             {
-                sb.AppendFormatLine("WHEN MATCHED");
-                sb.AppendFormatLine("    THEN");
-                sb.AppendFormatLine("        UPDATE");
-                sb.AppendFormatLine("        SET {0}", setClause);
+                sb.AppendLine("WHEN MATCHED");
+                sb.AppendLine("    THEN");
+                sb.AppendLine("        UPDATE");
+                sb.AppendLine($"        SET {setClause}");
             }
 
-            sb.AppendFormatLine("WHEN NOT MATCHED");
-            sb.AppendFormatLine("    THEN");
-            sb.AppendFormatLine("        INSERT ({0})", columnList);
+            sb.AppendLine("WHEN NOT MATCHED");
+            sb.AppendLine("    THEN");
+            sb.AppendLine($"        INSERT ({columnList})");
 
             if (this.sourceSearchCondition == null)
             {
-                sb.AppendFormatLine("        VALUES ({0});", valuesList);
+                sb.AppendLine($"        VALUES ({valuesList});");
             }
             else
             {
-                sb.AppendFormatLine("        VALUES ({0})", valuesList);
-                sb.AppendFormatLine("WHEN NOT MATCHED BY SOURCE {0}", sourceSearchCondition);
-                sb.AppendFormatLine("    THEN");
-                sb.AppendFormatLine("        DELETE;");
+                sb.AppendLine($"        VALUES ({valuesList})");
+                sb.AppendLine($"WHEN NOT MATCHED BY SOURCE {sourceSearchCondition}");
+                sb.AppendLine("    THEN");
+                sb.AppendLine("        DELETE;");
             }
 
             return sb.ToString();
         }
 
-        private string GetSearchCondition(string searchCondition)
+        string GetSearchCondition(string searchCondition)
         {
-            if (searchCondition == null)
-            {
-                return string.Empty;
-            }
-            else
-            {
-                return Invariant("AND {0}", searchCondition);
-            }
+            return searchCondition == null ?
+                "" :
+                $"AND {searchCondition}";
         }
 
-        private string GetMergeSearchCondition()
+        string GetMergeSearchCondition()
         {
-            if (targetTableSchema.PrimaryKeyColumns == null)
-                throw new ArgumentNullException(nameof(targetTableSchema.PrimaryKeyColumns));
-
             var columns = from c in targetTableSchema.PrimaryKeyColumns
-                          select Invariant("[Target].{0} = [Source].{0}", c.ToSelectListString());
+                          let column = c.ToSelectListString()
+                          select $"[Target].{column} = [Source].{column}";
 
             return string.Join(" AND ", columns);
         }
 
-        private string GetSetClause()
+        string GetSetClause()
         {
             // Exclude primary key and identity columns
             var columns = from c in targetTableSchema.Columns
                           where c.CanBeUpdated
-                          select Invariant("[Target].{0} = [Source].{0}", c.ToSelectListString());
+                          let column = c.ToSelectListString()
+                          select $"[Target].{column} = [Source].{column}";
 
             return string.Join(",\r\n            ", columns);
         }
 
-        private string GetValuesList()
+        string GetValuesList()
         {
             var columns = from c in targetTableSchema.Columns
                           where c.CanBeInserted

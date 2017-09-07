@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -13,39 +12,38 @@ namespace SqlBulkUpsert.Tests
         public async Task EndToEnd()
         {
             // Arrange
-            using (var connection = DatabaseHelper.CreateAndOpenConnection())
+            var columnMappings = new ColumnMappings<TestDto>(Constants.TableName)
             {
-                connection.Use("SqlBulkUpsertTestDb");
+                { "key_part_1", d => d.KeyPart1 },
+                { "key_part_2", d => d.KeyPart2 },
+                { "nullable_text", d => d.Text },
+                { "nullable_number", d => d.Number },
+                { "nullable_datetimeoffset", d => d.Date },
+            };
 
-                var targetSchema = await SqlTableSchema.LoadFromDatabaseAsync(connection, "TestUpsert", CancellationToken.None);
+            var upserter = new TypedUpserter<TestDto>(columnMappings);
 
-                var columnMappings = new ColumnMappings<TestDto>
+            var items = new List<TestDto>();
+
+            for (int i = 1; i <= 10; i++)
+            {
+                items.Add(new TestDto
                 {
-                    { "key_part_1", d => d.KeyPart1 },
-                    { "key_part_2", d => d.KeyPart2 },
-                    { "nullable_text", d => d.Text },
-                    { "nullable_number", d => d.Number },
-                    { "nullable_datetimeoffset", d => d.Date },
-                };
+                    KeyPart1 = "TEST",
+                    KeyPart2 = (short)i,
+                    Text = $"some text here {i}",
+                    Number = i,
+                    Date = new DateTimeOffset(new DateTime(2010, 11, 14, 12, 0, 0), TimeSpan.FromHours(i)),
+                });
+            }
 
-                var upserter = new TypedUpserter<TestDto>(targetSchema, columnMappings);
-
-                var items = new List<TestDto>();
-
-                for (int i = 1; i <= 10; i++)
-                {
-                    items.Add(new TestDto
-                    {
-                        KeyPart1 = "TEST",
-                        KeyPart2 = (short)i,
-                        Text = String.Format("some text here {0}", i),
-                        Number = i,
-                        Date = new DateTimeOffset(new DateTime(2010, 11, 14, 12, 0, 0), TimeSpan.FromHours(i)),
-                    });
-                }
-
+            using (var connection = DatabaseHelper.CreateAndOpenConnection(Constants.DatabaseName))
+            {
                 // Act
-                await upserter.UpsertAsync(connection, items, false, CancellationToken.None);
+                await upserter.UpsertAsync(
+                    new SqlBulkCopyAdapter(connection),
+                    items,
+                    updateOnMatch: false);
 
                 // Assert
                 foreach (var testDto in items)

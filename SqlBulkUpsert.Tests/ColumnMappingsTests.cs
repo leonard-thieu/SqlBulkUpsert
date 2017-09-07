@@ -13,7 +13,7 @@ namespace SqlBulkUpsert.Tests
             public void ReturnsInstance()
             {
                 // Arrange -> Act
-                var mapping = new ColumnMappings<object>();
+                var mapping = new ColumnMappings<object>("tableName");
 
                 // Assert
                 Assert.IsInstanceOfType(mapping, typeof(ColumnMappings<object>));
@@ -27,7 +27,7 @@ namespace SqlBulkUpsert.Tests
             public void MapIsNull_ThrowsArgumentNullException()
             {
                 // Arrange
-                var mapping = new ColumnMappings<object>();
+                var mapping = new ColumnMappings<object>("tableName");
                 Expression<Func<object, object>> map = null;
 
                 // Act -> Assert
