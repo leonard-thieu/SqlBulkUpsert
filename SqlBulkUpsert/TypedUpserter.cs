@@ -27,15 +27,26 @@ namespace SqlBulkUpsert
             if (items == null)
                 throw new ArgumentNullException(nameof(items));
 
-            var tableName = columnMappings.TableName;
+            var viewName = columnMappings.TableName;
 
-            await connection.DisableNonclusteredIndexes(tableName, cancellationToken).ConfigureAwait(false);
-            await connection.TruncateTable(tableName, cancellationToken).ConfigureAwait(false);
+            var stagingTableName = $"{viewName}_A";
+            var activeTableName = $"{viewName}_B";
+            var rowCount = await connection.GetRowCountAsync(stagingTableName, cancellationToken).ConfigureAwait(false);
+            if (rowCount != 0)
+            {
+                stagingTableName = $"{viewName}_B";
+                activeTableName = $"{viewName}_A";
+            }
+
+            await connection.DisableNonclusteredIndexesAsync(stagingTableName, cancellationToken).ConfigureAwait(false);
             using (var dataReader = new TypedDataReader<T>(columnMappings, items))
             {
-                await BulkCopyAsync(connection, dataReader, cancellationToken).ConfigureAwait(false);
+                await BulkCopyAsync(connection, stagingTableName, dataReader, cancellationToken).ConfigureAwait(false);
             }
-            await connection.RebuildNonclusteredIndexes(tableName, cancellationToken).ConfigureAwait(false);
+            await connection.RebuildNonclusteredIndexesAsync(stagingTableName, cancellationToken).ConfigureAwait(false);
+
+            await connection.SwitchTableAsync(viewName, stagingTableName, cancellationToken).ConfigureAwait(false);
+            await connection.TruncateTableAsync(activeTableName, cancellationToken).ConfigureAwait(false);
 
             return items.Count();
         }
@@ -54,7 +65,7 @@ namespace SqlBulkUpsert
             using (var tempTable = await TemporaryTable.CreateAsync(connection, columnMappings.TableName, cancellationToken).ConfigureAwait(false))
             using (var dataReader = new TypedDataReader<T>(columnMappings, items))
             {
-                await BulkCopyAsync(connection, dataReader, cancellationToken).ConfigureAwait(false);
+                await BulkCopyAsync(connection, columnMappings.TableName, dataReader, cancellationToken).ConfigureAwait(false);
 
                 var targetTableSchema = await SqlTableSchema.LoadFromDatabaseAsync(connection, columnMappings.TableName, cancellationToken).ConfigureAwait(false);
 
@@ -64,13 +75,14 @@ namespace SqlBulkUpsert
 
         async Task BulkCopyAsync(
             SqlConnection connection,
+            string tableName,
             IDataReader data,
             CancellationToken cancellationToken)
         {
             using (var sqlBulkCopy = new SqlBulkCopy(connection, SqlBulkCopyOptions.TableLock, null))
             {
                 sqlBulkCopy.BulkCopyTimeout = 0;
-                sqlBulkCopy.DestinationTableName = columnMappings.TableName;
+                sqlBulkCopy.DestinationTableName = tableName;
 
                 foreach (var columnName in columnMappings.Keys)
                 {

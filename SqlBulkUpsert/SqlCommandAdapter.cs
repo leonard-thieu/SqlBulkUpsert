@@ -100,6 +100,17 @@ namespace SqlBulkUpsert
             }
         }
 
+        /// <summary>
+        /// Executes the query asynchronously and returns the first column of the first row
+        /// in the result set returned by the query. Additional columns or rows are ignored.
+        /// 
+        /// The cancellation token can be used to request that the operation be abandoned before
+        /// the command timeout elapses. Exceptions will be reported via the returned Task object.
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation instruction.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        public Task<object> ExecuteScalarAsync(CancellationToken cancellationToken) => command.ExecuteScalarAsync(cancellationToken);
+
         #region IDisposable Members
 
         bool disposed;

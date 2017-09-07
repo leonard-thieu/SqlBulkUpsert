@@ -8,7 +8,57 @@ namespace SqlBulkUpsert
 {
     static class SqlConnectionExtensions
     {
-        public static async Task TruncateTable(
+        public static async Task<int> GetRowCountAsync(
+            this SqlConnection connection,
+            string tableName,
+            CancellationToken cancellationToken)
+        {
+            if (connection == null)
+                throw new ArgumentNullException(nameof(connection));
+            if (tableName == null)
+                throw new ArgumentNullException(nameof(tableName));
+
+            using (var command = SqlCommandAdapter.FromConnection(connection))
+            {
+                command.CommandText = $@"
+SELECT Count(*) 
+FROM [{tableName}];";
+
+                var scalar = await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
+
+                return Convert.ToInt32(scalar);
+            }
+        }
+
+        public static async Task SwitchTableAsync(
+            this SqlConnection connection,
+            string viewName,
+            string tableName,
+            CancellationToken cancellationToken)
+        {
+            if (connection == null)
+                throw new ArgumentNullException(nameof(connection));
+            if (viewName == null)
+                throw new ArgumentNullException(nameof(viewName));
+            if (tableName == null)
+                throw new ArgumentNullException(nameof(tableName));
+
+            var tableSchema = await SqlTableSchema.LoadFromDatabaseAsync(connection, tableName, cancellationToken).ConfigureAwait(false);
+
+            using (var command = SqlCommandAdapter.FromConnection(connection))
+            {
+                command.CommandText = $@"
+ALTER VIEW [{viewName}]
+AS
+
+SELECT {tableSchema.Columns.ToSelectListString()}
+FROM [{tableName}];";
+
+                await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+            }
+        }
+
+        public static async Task TruncateTableAsync(
             this SqlConnection connection,
             string tableName,
             CancellationToken cancellationToken)
@@ -26,23 +76,23 @@ namespace SqlBulkUpsert
             }
         }
 
-        public static Task DisableNonclusteredIndexes(
+        public static Task DisableNonclusteredIndexesAsync(
             this SqlConnection connection,
             string tableName,
             CancellationToken cancellationToken)
         {
-            return AlterNonclusteredIndexes(connection, tableName, "DISABLE", cancellationToken);
+            return AlterNonclusteredIndexesAsync(connection, tableName, "DISABLE", cancellationToken);
         }
 
-        public static Task RebuildNonclusteredIndexes(
+        public static Task RebuildNonclusteredIndexesAsync(
             this SqlConnection connection,
             string tableName,
             CancellationToken cancellationToken)
         {
-            return AlterNonclusteredIndexes(connection, tableName, "REBUILD", cancellationToken);
+            return AlterNonclusteredIndexesAsync(connection, tableName, "REBUILD", cancellationToken);
         }
 
-        static async Task AlterNonclusteredIndexes(
+        static async Task AlterNonclusteredIndexesAsync(
             this SqlConnection connection,
             string tableName,
             string action,
