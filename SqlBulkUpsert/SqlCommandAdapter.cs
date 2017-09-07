@@ -55,6 +55,13 @@ namespace SqlBulkUpsert
             }
         }
 
+        /// Gets the <see cref="SqlParameterCollection"/>.
+        /// </summary>
+        public SqlParameterCollection Parameters
+        {
+            get => command.Parameters;
+        }
+
         /// <summary>
         /// Executes a Transact-SQL statement against the connection and returns the number of rows affected.
         /// </summary>

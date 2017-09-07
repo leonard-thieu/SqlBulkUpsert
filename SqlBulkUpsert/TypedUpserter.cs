@@ -27,18 +27,17 @@ namespace SqlBulkUpsert
             if (items == null)
                 throw new ArgumentNullException(nameof(items));
 
-            using (var command = SqlCommandAdapter.FromConnection(connection))
-            {
-                command.CommandText = $@"TRUNCATE TABLE [{columnMappings.TableName}];";
-                await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
-            }
+            var tableName = columnMappings.TableName;
 
+            await connection.DisableNonclusteredIndexes(tableName, cancellationToken).ConfigureAwait(false);
+            await connection.TruncateTable(tableName, cancellationToken).ConfigureAwait(false);
             using (var dataReader = new TypedDataReader<T>(columnMappings, items))
             {
                 await BulkCopyAsync(connection, dataReader, cancellationToken).ConfigureAwait(false);
-
-                return items.Count();
             }
+            await connection.RebuildNonclusteredIndexes(tableName, cancellationToken).ConfigureAwait(false);
+
+            return items.Count();
         }
 
         public async Task<int> UpsertAsync(
