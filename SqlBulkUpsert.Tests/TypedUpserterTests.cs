@@ -13,13 +13,13 @@ namespace SqlBulkUpsert.Tests
         {
             // Arrange
             var columnMappings = new ColumnMappings<TestDto>(Constants.TableName)
-                {
-                    { "key_part_1", d => d.KeyPart1 },
-                    { "key_part_2", d => d.KeyPart2 },
-                    { "nullable_text", d => d.Text },
-                    { "nullable_number", d => d.Number },
-                    { "nullable_datetimeoffset", d => d.Date },
-                };
+            {
+                { "key_part_1", d => d.KeyPart1 },
+                { "key_part_2", d => d.KeyPart2 },
+                { "nullable_text", d => d.Text },
+                { "nullable_number", d => d.Number },
+                { "nullable_datetimeoffset", d => d.Date },
+            };
 
             var upserter = new TypedUpserter<TestDto>(columnMappings);
 
