@@ -101,7 +101,7 @@ namespace SqlBulkUpsert
         public void Open() => sqlConnection.Open();
 
         /// <summary>
-        /// Opens a database connection with the property settings specified by the <see cref="ISqlConnection.ConnectionString"/>.
+        /// Opens a database connection with the property settings specified by the <see cref="ConnectionString"/>.
         /// The cancellation token can be used to request that the operation be abandoned
         /// before the connection timeout elapses. Exceptions will be propagated via the
         /// returned Task. If the connection timeout time elapses without successfully connecting,
