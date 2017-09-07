@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.SqlClient;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -7,7 +8,7 @@ namespace SqlBulkUpsert
     sealed class TemporaryTable : IDisposable
     {
         public static async Task<TemporaryTable> CreateAsync(
-            ISqlConnection connection,
+            SqlConnection connection,
             string targetTableName,
             CancellationToken cancellationToken)
         {
@@ -22,7 +23,7 @@ namespace SqlBulkUpsert
             return table;
         }
 
-        TemporaryTable(ISqlConnection connection, string targetTableName)
+        TemporaryTable(SqlConnection connection, string targetTableName)
         {
             Name = $"#{targetTableName}";
 
@@ -30,7 +31,7 @@ namespace SqlBulkUpsert
             this.targetTableName = targetTableName;
         }
 
-        readonly ISqlConnection connection;
+        readonly SqlConnection connection;
         readonly string targetTableName;
 
         public string Name { get; }

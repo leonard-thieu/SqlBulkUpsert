@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.Common;
+using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
@@ -14,7 +15,7 @@ namespace SqlBulkUpsert
     {
         [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public static async Task<SqlTableSchema> LoadFromDatabaseAsync(
-            ISqlConnection connection,
+            SqlConnection connection,
             string tableName,
             CancellationToken cancellationToken)
         {
