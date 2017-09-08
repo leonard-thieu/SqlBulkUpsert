@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace SqlBulkUpsert
@@ -25,8 +26,6 @@ namespace SqlBulkUpsert
         readonly IList<Func<T, object>> mappingFuncs;
         readonly IEnumerator<T> items;
 
-        public void Dispose() { }
-
         public object GetValue(int i) => mappingFuncs[i](items.Current);
 
         public int GetOrdinal(string name) => mappingLookup[name];
@@ -35,149 +34,94 @@ namespace SqlBulkUpsert
 
         public bool Read() => items.MoveNext();
 
-        // Not used by SqlBulkCopy (satisfying interface only)
+        #region Not used by SqlBulkCopy (satisfying interface only)
 
-        #region IDataReader Members
+        [ExcludeFromCodeCoverage]
+        public string GetName(int i) => throw new NotImplementedException();
 
-        public string GetName(int i)
-        {
-            throw new NotImplementedException();
-        }
+        [ExcludeFromCodeCoverage]
+        public string GetDataTypeName(int i) => throw new NotImplementedException();
 
-        public string GetDataTypeName(int i)
-        {
-            throw new NotImplementedException();
-        }
+        [ExcludeFromCodeCoverage]
+        public Type GetFieldType(int i) => throw new NotImplementedException();
 
-        public Type GetFieldType(int i)
-        {
-            throw new NotImplementedException();
-        }
+        [ExcludeFromCodeCoverage]
+        public int GetValues(object[] values) => throw new NotImplementedException();
 
-        public int GetValues(object[] values)
-        {
-            throw new NotImplementedException();
-        }
+        [ExcludeFromCodeCoverage]
+        public bool GetBoolean(int i) => throw new NotImplementedException();
 
-        public bool GetBoolean(int i)
-        {
-            throw new NotImplementedException();
-        }
+        [ExcludeFromCodeCoverage]
+        public byte GetByte(int i) => throw new NotImplementedException();
 
-        public byte GetByte(int i)
-        {
-            throw new NotImplementedException();
-        }
+        [ExcludeFromCodeCoverage]
+        public long GetBytes(int i, long fieldOffset, byte[] buffer, int bufferoffset, int length) => throw new NotImplementedException();
 
-        public long GetBytes(int i, long fieldOffset, byte[] buffer, int bufferoffset, int length)
-        {
-            throw new NotImplementedException();
-        }
+        [ExcludeFromCodeCoverage]
+        public char GetChar(int i) => throw new NotImplementedException();
 
-        public char GetChar(int i)
-        {
-            throw new NotImplementedException();
-        }
+        [ExcludeFromCodeCoverage]
+        public long GetChars(int i, long fieldoffset, char[] buffer, int bufferoffset, int length) => throw new NotImplementedException();
 
-        public long GetChars(int i, long fieldoffset, char[] buffer, int bufferoffset, int length)
-        {
-            throw new NotImplementedException();
-        }
+        [ExcludeFromCodeCoverage]
+        public Guid GetGuid(int i) => throw new NotImplementedException();
 
-        public Guid GetGuid(int i)
-        {
-            throw new NotImplementedException();
-        }
+        [ExcludeFromCodeCoverage]
+        public short GetInt16(int i) => throw new NotImplementedException();
 
-        public short GetInt16(int i)
-        {
-            throw new NotImplementedException();
-        }
+        [ExcludeFromCodeCoverage]
+        public int GetInt32(int i) => throw new NotImplementedException();
 
-        public int GetInt32(int i)
-        {
-            throw new NotImplementedException();
-        }
+        [ExcludeFromCodeCoverage]
+        public long GetInt64(int i) => throw new NotImplementedException();
 
-        public long GetInt64(int i)
-        {
-            throw new NotImplementedException();
-        }
+        [ExcludeFromCodeCoverage]
+        public float GetFloat(int i) => throw new NotImplementedException();
 
-        public float GetFloat(int i)
-        {
-            throw new NotImplementedException();
-        }
+        [ExcludeFromCodeCoverage]
+        public double GetDouble(int i) => throw new NotImplementedException();
 
-        public double GetDouble(int i)
-        {
-            throw new NotImplementedException();
-        }
+        [ExcludeFromCodeCoverage]
+        public string GetString(int i) => throw new NotImplementedException();
 
-        public string GetString(int i)
-        {
-            throw new NotImplementedException();
-        }
+        [ExcludeFromCodeCoverage]
+        public decimal GetDecimal(int i) => throw new NotImplementedException();
 
-        public decimal GetDecimal(int i)
-        {
-            throw new NotImplementedException();
-        }
+        [ExcludeFromCodeCoverage]
+        public DateTime GetDateTime(int i) => throw new NotImplementedException();
 
-        public DateTime GetDateTime(int i)
-        {
-            throw new NotImplementedException();
-        }
+        [ExcludeFromCodeCoverage]
+        public IDataReader GetData(int i) => throw new NotImplementedException();
 
-        public IDataReader GetData(int i)
-        {
-            throw new NotImplementedException();
-        }
+        [ExcludeFromCodeCoverage]
+        public bool IsDBNull(int i) => throw new NotImplementedException();
 
-        public bool IsDBNull(int i)
-        {
-            throw new NotImplementedException();
-        }
+        [ExcludeFromCodeCoverage]
+        object IDataRecord.this[int i] => throw new NotImplementedException();
 
-        object IDataRecord.this[int i]
-        {
-            get { throw new NotImplementedException(); }
-        }
+        [ExcludeFromCodeCoverage]
+        object IDataRecord.this[string name] => throw new NotImplementedException();
 
-        object IDataRecord.this[string name]
-        {
-            get { throw new NotImplementedException(); }
-        }
+        [ExcludeFromCodeCoverage]
+        public void Close() => throw new NotImplementedException();
 
-        public void Close()
-        {
-            throw new NotImplementedException();
-        }
+        [ExcludeFromCodeCoverage]
+        public DataTable GetSchemaTable() => throw new NotImplementedException();
 
-        public DataTable GetSchemaTable()
-        {
-            throw new NotImplementedException();
-        }
+        [ExcludeFromCodeCoverage]
+        public bool NextResult() => throw new NotImplementedException();
 
-        public bool NextResult()
-        {
-            throw new NotImplementedException();
-        }
+        [ExcludeFromCodeCoverage]
+        public int Depth => throw new NotImplementedException();
 
-        public int Depth
-        {
-            get { throw new NotImplementedException(); }
-        }
+        [ExcludeFromCodeCoverage]
+        public bool IsClosed => throw new NotImplementedException();
 
-        public bool IsClosed
-        {
-            get { throw new NotImplementedException(); }
-        }
+        [ExcludeFromCodeCoverage]
+        public int RecordsAffected => throw new NotImplementedException();
 
-        public int RecordsAffected
-        {
-            get { throw new NotImplementedException(); }
-        }
+        [ExcludeFromCodeCoverage]
+        public void Dispose() { }
 
         #endregion
     }
