@@ -78,6 +78,17 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ColumnComparer.cs" />
+    <Compile Include="ColumnMappingsTests.cs" />
+    <Compile Include="ColumnTests.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="DatabaseHelper.cs" />
+    <Compile Include="DatabaseTestsBase.cs" />
+    <Compile Include="SqlCommandExceptionTests.cs" />
+    <Compile Include="SqlTableSchemaTests.cs" />
+    <Compile Include="TypedUpserterTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
@@ -96,17 +107,6 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="ColumnComparer.cs" />
-    <Compile Include="ColumnMappingsTests.cs" />
-    <Compile Include="ColumnTests.cs" />
-    <Compile Include="Constants.cs" />
-    <Compile Include="DatabaseHelper.cs" />
-    <Compile Include="DatabaseTestsBase.cs" />
-    <Compile Include="SqlCommandExceptionTests.cs" />
-    <Compile Include="SqlTableSchemaTests.cs" />
-    <Compile Include="TypedUpserterTests.cs" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

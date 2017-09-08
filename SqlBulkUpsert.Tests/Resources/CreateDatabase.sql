@@ -36,7 +36,6 @@ CREATE TABLE [dbo].[TestUpsert](
 	[nullable_money] money NULL,
 	[nullable_varbinary] varbinary(max) NULL,
 	[nullable_image] image NULL,
-	[nullable_xml] xml NULL,
 	CONSTRAINT [PK_TestUpsert] PRIMARY KEY CLUSTERED 
 	(
 		[key_part_1] ASC,

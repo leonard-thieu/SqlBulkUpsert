@@ -77,7 +77,7 @@ WHERE kcu.TABLE_NAME = {TableNameParam};";
 
             while (await sqlDataReader.ReadAsync(cancellationToken).ConfigureAwait(false))
             {
-                var column = Column.CreateFromReader(sqlDataReader);
+                var column = ColumnFactory.CreateFromReader(sqlDataReader);
                 columns.Add(column);
             }
 
@@ -114,7 +114,6 @@ WHERE kcu.TABLE_NAME = {TableNameParam};";
             foreach (var columnName in primaryKeyColumnNames)
             {
                 var column = Columns.Single(c => c.Name == columnName);
-                column.CanBeUpdated = false;
                 PrimaryKeyColumns.Add(column);
             }
         }

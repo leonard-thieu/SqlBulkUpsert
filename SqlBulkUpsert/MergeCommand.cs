@@ -62,21 +62,13 @@ namespace SqlBulkUpsert
         string GetSetClause()
         {
             // Exclude primary key and identity columns
-            var columns = from c in targetTableSchema.Columns
-                          where c.CanBeUpdated
+            var columns = from c in targetTableSchema.Columns.Except(targetTableSchema.PrimaryKeyColumns)
                           let column = c.ToSelectListString()
                           select $"[Target].{column} = [Source].{column}";
 
             return string.Join(",\r\n            ", columns);
         }
 
-        string GetValuesList()
-        {
-            var columns = from c in targetTableSchema.Columns
-                          where c.CanBeInserted
-                          select c;
-
-            return columns.ToSelectListString();
-        }
+        string GetValuesList() => targetTableSchema.Columns.ToSelectListString();
     }
 }

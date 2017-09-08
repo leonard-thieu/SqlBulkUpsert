@@ -9,103 +9,36 @@ namespace SqlBulkUpsert.Tests
         readonly Dictionary<Column, string> columnDefn = new Dictionary<Column, string>
         {
             {
-                new TextColumn
-                {
-                    Name = "key_part_1",
-                    OrdinalPosition = 1,
-                    Nullable = false,
-                    DataType = "nchar",
-                    CharLength = 4,
-                    ByteLength = 8,
-                }, "[key_part_1] nchar(4) NOT NULL"
+                new StringColumn("key_part_1", 1, false, "nchar", 4, 8),
+                "[key_part_1] nchar(4) NOT NULL"
             },
             {
-                new NumericColumn
-                {
-                    Name = "key_part_2",
-                    OrdinalPosition = 2,
-                    Nullable = false,
-                    DataType = "smallint",
-                    Precision = 5,
-                    Radix = 10,
-                    Scale = 0,
-                }, "[key_part_2] smallint NOT NULL"
+                new NumericColumn("key_part_2", 2, false, "smallint", 5, 10, 0),
+                "[key_part_2] smallint NOT NULL"
             },
             {
-                new TextColumn
-                {
-                    Name = "nullable_text",
-                    OrdinalPosition = 3,
-                    Nullable = true,
-                    DataType = "nvarchar",
-                    CharLength = 50,
-                    ByteLength = 100,
-                }, "[nullable_text] nvarchar(50) NULL"
+                new StringColumn("nullable_text", 3, true, "nvarchar", 50, 100),
+                "[nullable_text] nvarchar(50) NULL"
             },
             {
-                new NumericColumn
-                {
-                    Name = "nullable_number",
-                    OrdinalPosition = 4,
-                    Nullable = true,
-                    DataType = "int",
-                    Precision = 10,
-                    Radix = 10,
-                    Scale = 0,
-                }, "[nullable_number] int NULL"
+                new NumericColumn("nullable_number", 4, true, "int", 10, 10, 0),
+                "[nullable_number] int NULL"
             },
             {
-                new DateColumn
-                {
-                    Name = "nullable_datetimeoffset",
-                    OrdinalPosition = 5,
-                    Nullable = true,
-                    DataType = "datetimeoffset",
-                    Precision = 7,
-                }, "[nullable_datetimeoffset] datetimeoffset(7) NULL"
+                new DateTimeColumn("nullable_datetimeoffset", 5, true, "datetimeoffset", 7),
+                "[nullable_datetimeoffset] datetimeoffset(7) NULL"
             },
             {
-                new NumericColumn
-                {
-                    Name = "nullable_money",
-                    OrdinalPosition = 6,
-                    Nullable = true,
-                    DataType = "money",
-                    Precision = 19,
-                    Radix = 10,
-                    Scale = 4,
-                }, "[nullable_money] money NULL"
+                new NumericColumn("nullable_money", 6, true, "money", 19, 10, 4),
+                "[nullable_money] money NULL"
             },
             {
-                new TextColumn
-                {
-                    Name = "nullable_varbinary",
-                    OrdinalPosition = 7,
-                    Nullable = true,
-                    DataType = "varbinary",
-                    CharLength = -1,
-                    ByteLength = -1,
-                }, "[nullable_varbinary] varbinary(max) NULL"
+                new StringColumn("nullable_varbinary", 7, true, "varbinary", -1, -1),
+                "[nullable_varbinary] varbinary(max) NULL"
             },
             {
-                new TextColumn
-                {
-                    Name = "nullable_image",
-                    OrdinalPosition = 8,
-                    Nullable = true,
-                    DataType = "image",
-                    CharLength = 2147483647,
-                    ByteLength = 2147483647,
-                }, "[nullable_image] image NULL"
-            },
-            {
-                new Column
-                {
-                    Name = "nullable_xml",
-                    OrdinalPosition = 9,
-                    Nullable = true,
-                    DataType = "xml",
-                }, "[nullable_xml] xml NULL"
+                new StringColumn("nullable_image", 8, true, "image", 2147483647, 2147483647),
+                "[nullable_image] image NULL"
             },
         };
 
