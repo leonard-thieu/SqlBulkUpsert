@@ -87,6 +87,7 @@
     <Compile Include="DatabaseHelper.cs" />
     <Compile Include="DatabaseTestsBase.cs" />
     <Compile Include="DateTimeColumnTests.cs" />
+    <Compile Include="IEnumerableColumnBaseExtensionsTests.cs" />
     <Compile Include="NumericColumnTests.cs" />
     <Compile Include="SqlCommandExceptionTests.cs" />
     <Compile Include="SqlTableSchemaTests.cs" />

@@ -14,7 +14,7 @@ namespace SqlBulkUpsert
             if (columns == null)
                 throw new ArgumentNullException(nameof(columns));
 
-            return string.Join(", ", columns.Select(c => c.ToSelectListString()).ToList());
+            return string.Join(", ", columns.Select(c => c.ToSelectListString()));
         }
 
         public static string ToColumnDefinitionListString(this IEnumerable<ColumnBase> columns)
@@ -22,7 +22,7 @@ namespace SqlBulkUpsert
             if (columns == null)
                 throw new ArgumentNullException(nameof(columns));
 
-            return string.Join(", ", columns.Select(c => c.ToColumnDefinitionString()).ToList());
+            return string.Join(", ", columns.Select(c => c.ToColumnDefinitionString()));
         }
     }
 }
