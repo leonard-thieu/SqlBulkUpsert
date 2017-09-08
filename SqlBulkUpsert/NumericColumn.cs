@@ -1,51 +1,20 @@
-﻿using System.Data;
-
-namespace SqlBulkUpsert
+﻿namespace SqlBulkUpsert
 {
-    sealed class NumericColumn : Column
+    sealed class NumericColumn : ColumnBase
     {
-        public int? Precision { get; set; }
-        public int? Radix { get; set; }
-        public int? Scale { get; set; }
-
-        public override Column Clone()
+        public NumericColumn(string name, int ordinalPosition, bool isNullable, string dataType, int? precision = null, int? radix = null, int? scale = null) :
+            base(name, ordinalPosition, isNullable, dataType)
         {
-            return CopyTo(new NumericColumn());
+            Precision = precision;
+            Radix = radix;
+            Scale = scale;
         }
 
-        public override Column CopyTo(Column column)
-        {
-            var numericColumn = (NumericColumn)column;
-            numericColumn.Precision = Precision;
-            numericColumn.Radix = Radix;
-            numericColumn.Scale = Scale;
+        public int? Precision { get; }
+        public int? Radix { get; }
+        public int? Scale { get; }
 
-            return base.CopyTo(numericColumn);
-        }
-
-        public override bool Equals(Column other)
-        {
-            var numericColumn = other as NumericColumn;
-            if (numericColumn == null)
-                return false;
-
-            return
-                 base.Equals(other) &&
-                 Precision == numericColumn.Precision &&
-                 Radix == numericColumn.Radix &&
-                 Scale == numericColumn.Scale;
-        }
-
-        protected override void Populate(IDataReader sqlDataReader)
-        {
-            base.Populate(sqlDataReader);
-
-            Precision = sqlDataReader.GetValue<byte?>("NUMERIC_PRECISION");
-            Radix = sqlDataReader.GetValue<short?>("NUMERIC_PRECISION_RADIX");
-            Scale = sqlDataReader.GetValue<int?>("NUMERIC_SCALE");
-        }
-
-        public override string ToFullDataTypeString()
+        protected override string ToFullDataTypeString()
         {
             switch (DataType)
             {
@@ -56,9 +25,10 @@ namespace SqlBulkUpsert
                 case "float":
                 case "real":
                     return $"{DataType}({Radix})";
-            }
 
-            return base.ToFullDataTypeString();
+                default:
+                    return base.ToFullDataTypeString();
+            }
         }
     }
 }

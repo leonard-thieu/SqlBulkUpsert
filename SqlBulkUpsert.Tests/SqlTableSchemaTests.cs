@@ -33,65 +33,17 @@ namespace SqlBulkUpsert.Tests
         {
             // Arrange
             var columnDetail = new DataTable();
-            columnDetail.Columns.AddRange(new List<DataColumn>
-                                          {
-                                              new DataColumn
-                                              {
-                                                  ColumnName = "COLUMN_NAME",
-                                                  DataType = typeof(string),
-                                              },
-                                              new DataColumn
-                                              {
-                                                  ColumnName = "ORDINAL_POSITION",
-                                                  DataType = typeof(int),
-                                              },
-                                              new DataColumn
-                                              {
-                                                  ColumnName = "IS_NULLABLE",
-                                                  DataType = typeof(string),
-                                              },
-                                              new DataColumn
-                                              {
-                                                  ColumnName = "DATA_TYPE",
-                                                  DataType = typeof(string),
-                                              },
-                                              new DataColumn
-                                              {
-                                                  ColumnName = "CHARACTER_MAXIMUM_LENGTH",
-                                                  DataType = typeof(int),
-                                                  AllowDBNull = true,
-                                              },
-                                              new DataColumn
-                                              {
-                                                  ColumnName = "CHARACTER_OCTET_LENGTH",
-                                                  DataType = typeof(int),
-                                                  AllowDBNull = true,
-                                              },
-                                              new DataColumn
-                                              {
-                                                  ColumnName = "NUMERIC_PRECISION",
-                                                  DataType = typeof(byte),
-                                                  AllowDBNull = true,
-                                              },
-                                              new DataColumn
-                                              {
-                                                  ColumnName = "NUMERIC_PRECISION_RADIX",
-                                                  DataType = typeof(short),
-                                                  AllowDBNull = true,
-                                              },
-                                              new DataColumn
-                                              {
-                                                  ColumnName = "NUMERIC_SCALE",
-                                                  DataType = typeof(int),
-                                                  AllowDBNull = true,
-                                              },
-                                              new DataColumn
-                                              {
-                                                  ColumnName = "DATETIME_PRECISION",
-                                                  DataType = typeof(short),
-                                                  AllowDBNull = true,
-                                              },
-                                          }.ToArray());
+
+            columnDetail.Columns.Add("COLUMN_NAME", typeof(string));
+            columnDetail.Columns.Add("ORDINAL_POSITION", typeof(int));
+            columnDetail.Columns.Add("IS_NULLABLE", typeof(string));
+            columnDetail.Columns.Add("DATA_TYPE", typeof(string));
+            columnDetail.Columns.Add("CHARACTER_MAXIMUM_LENGTH", typeof(int)).AllowDBNull = true;
+            columnDetail.Columns.Add("CHARACTER_OCTET_LENGTH", typeof(int)).AllowDBNull = true;
+            columnDetail.Columns.Add("NUMERIC_PRECISION", typeof(byte)).AllowDBNull = true;
+            columnDetail.Columns.Add("NUMERIC_PRECISION_RADIX", typeof(short)).AllowDBNull = true;
+            columnDetail.Columns.Add("NUMERIC_SCALE", typeof(int)).AllowDBNull = true;
+            columnDetail.Columns.Add("DATETIME_PRECISION", typeof(short)).AllowDBNull = true;
 
             columnDetail.Rows.Add("key_part_1", 1, "NO", "nchar", 4, 8, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value);
             columnDetail.Rows.Add("key_part_2", 2, "NO", "smallint", DBNull.Value, DBNull.Value, (byte)5, (short)10, 0, DBNull.Value);
@@ -101,133 +53,39 @@ namespace SqlBulkUpsert.Tests
             columnDetail.Rows.Add("nullable_money", 6, "YES", "money", DBNull.Value, DBNull.Value, (byte)19, (short)10, 4, DBNull.Value);
             columnDetail.Rows.Add("nullable_varbinary", 7, "YES", "varbinary", -1, -1, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value);
             columnDetail.Rows.Add("nullable_image", 8, "YES", "image", 2147483647, 2147483647, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value);
-            columnDetail.Rows.Add("nullable_xml", 9, "YES", "xml", -1, -1, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value);
 
             var keyDetail = new DataTable();
-            keyDetail.Columns.AddRange(new List<DataColumn>
-                                       {
-                                           new DataColumn
-                                           {
-                                               ColumnName = "COLUMN_NAME",
-                                               DataType = typeof (string),
-                                           },
-                                       }.ToArray());
+
+            keyDetail.Columns.Add("COLUMN_NAME", typeof(string));
 
             keyDetail.Rows.Add("key_part_1");
             keyDetail.Rows.Add("key_part_2");
 
             var dataTableReader = new DataTableReader(new[] { columnDetail, keyDetail });
 
-            var expectedColumns = new List<Column>
+            var expectedColumns = new List<ColumnBase>
             {
-                new TextColumn
-                {
-                    Name = "key_part_1",
-                    OrdinalPosition = 1,
-                    Nullable = false,
-                    DataType = "nchar",
-                    CharLength = 4,
-                    ByteLength = 8,
-                },
-                new NumericColumn
-                {
-                    Name = "key_part_2",
-                    OrdinalPosition = 2,
-                    Nullable = false,
-                    DataType = "smallint",
-                    Precision = 5,
-                    Radix = 10,
-                    Scale = 0,
-                },
-                new TextColumn
-                {
-                    Name = "nullable_text",
-                    OrdinalPosition = 3,
-                    Nullable = true,
-                    DataType = "nvarchar",
-                    CharLength = 50,
-                    ByteLength = 100,
-                },
-                new NumericColumn
-                {
-                    Name = "nullable_number",
-                    OrdinalPosition = 4,
-                    Nullable = true,
-                    DataType = "int",
-                    Precision = 10,
-                    Radix = 10,
-                    Scale = 0,
-                },
-                new DateColumn
-                {
-                    Name = "nullable_datetimeoffset",
-                    OrdinalPosition = 5,
-                    Nullable = true,
-                    DataType = "datetimeoffset",
-                    Precision = 7,
-                },
-                new NumericColumn
-                {
-                    Name = "nullable_money",
-                    OrdinalPosition = 6,
-                    Nullable = true,
-                    DataType = "money",
-                    Precision = 19,
-                    Radix = 10,
-                    Scale = 4,
-                },
-                new TextColumn
-                {
-                    Name = "nullable_varbinary",
-                    OrdinalPosition = 7,
-                    Nullable = true,
-                    DataType = "varbinary",
-                    CharLength = -1,
-                    ByteLength = -1,
-                },
-                new TextColumn
-                {
-                    Name = "nullable_image",
-                    OrdinalPosition = 8,
-                    Nullable = true,
-                    DataType = "image",
-                    CharLength = 2147483647,
-                    ByteLength = 2147483647,
-                },
-                new Column
-                {
-                    Name = "nullable_xml",
-                    OrdinalPosition = 9,
-                    Nullable = true,
-                    DataType = "xml",
-                },
+                new StringColumn("key_part_1", 1, false, "nchar", 4, 8),
+                new NumericColumn("key_part_2", 2, false, "smallint", 5, 10, 0),
+                new StringColumn("nullable_text", 3, true, "nvarchar", 50, 100),
+                new NumericColumn("nullable_number", 4, true, "int", 10, 10, 0),
+                new DateTimeColumn("nullable_datetimeoffset", 5, true, "datetimeoffset", 7),
+                new NumericColumn("nullable_money", 6, true, "money", 19, 10, 4),
+                new StringColumn("nullable_varbinary", 7, true, "varbinary", -1, -1),
+                new StringColumn("nullable_image", 8, true, "image", 2147483647, 2147483647),
             };
 
-            var expectedKeyColumns = new List<Column>
+            var expectedKeyColumns = new List<ColumnBase>
             {
-                new TextColumn
-                {
-                    Name = "key_part_1",
-                    OrdinalPosition = 1,
-                    Nullable = false,
-                    DataType = "nchar",
-                    CharLength = 4,
-                    ByteLength = 8,
-                },
-                new NumericColumn
-                {
-                    Name = "key_part_2",
-                    OrdinalPosition = 2,
-                    Nullable = false,
-                    DataType = "smallint",
-                    Precision = 5,
-                    Radix = 10,
-                    Scale = 0,
-                },
+                new StringColumn("key_part_1", 1, false, "nchar", 4, 8),
+                new NumericColumn("key_part_2", 2, false, "smallint", 5, 10, 0),
             };
 
             // Act
-            var schema = await SqlTableSchema.LoadFromReaderAsync(Constants.TableName, dataTableReader, CancellationToken.None);
+            var schema = await SqlTableSchema.LoadFromReaderAsync(
+                Constants.TableName,
+                dataTableReader,
+                CancellationToken.None);
 
             // Assert 
             Assert.AreEqual(Constants.TableName, schema.TableName);
@@ -241,112 +99,22 @@ namespace SqlBulkUpsert.Tests
             // Arrange
             using (var connection = DatabaseHelper.CreateAndOpenConnection(Constants.DatabaseName))
             {
-                var expectedColumns = new List<Column>
+                var expectedColumns = new List<ColumnBase>
                 {
-                    new TextColumn
-                    {
-                        Name = "key_part_1",
-                        OrdinalPosition = 1,
-                        Nullable = false,
-                        DataType = "nchar",
-                        CharLength = 4,
-                        ByteLength = 8,
-                    },
-                    new NumericColumn
-                    {
-                        Name = "key_part_2",
-                        OrdinalPosition = 2,
-                        Nullable = false,
-                        DataType = "smallint",
-                        Precision = 5,
-                        Radix = 10,
-                        Scale = 0,
-                    },
-                    new TextColumn
-                    {
-                        Name = "nullable_text",
-                        OrdinalPosition = 3,
-                        Nullable = true,
-                        DataType = "nvarchar",
-                        CharLength = 50,
-                        ByteLength = 100,
-                    },
-                    new NumericColumn
-                    {
-                        Name = "nullable_number",
-                        OrdinalPosition = 4,
-                        Nullable = true,
-                        DataType = "int",
-                        Precision = 10,
-                        Radix = 10,
-                        Scale = 0,
-                    },
-                    new DateColumn
-                    {
-                        Name = "nullable_datetimeoffset",
-                        OrdinalPosition = 5,
-                        Nullable = true,
-                        DataType = "datetimeoffset",
-                        Precision = 7,
-                    },
-                    new NumericColumn
-                    {
-                        Name = "nullable_money",
-                        OrdinalPosition = 6,
-                        Nullable = true,
-                        DataType = "money",
-                        Precision = 19,
-                        Radix = 10,
-                        Scale = 4,
-                    },
-                    new TextColumn
-                    {
-                        Name = "nullable_varbinary",
-                        OrdinalPosition = 7,
-                        Nullable = true,
-                        DataType = "varbinary",
-                        CharLength = -1,
-                        ByteLength = -1,
-                    },
-                    new TextColumn
-                    {
-                        Name = "nullable_image",
-                        OrdinalPosition = 8,
-                        Nullable = true,
-                        DataType = "image",
-                        CharLength = 2147483647,
-                        ByteLength = 2147483647,
-                    },
-                    new Column
-                    {
-                        Name = "nullable_xml",
-                        OrdinalPosition = 9,
-                        Nullable = true,
-                        DataType = "xml",
-                    },
+                    new StringColumn("key_part_1", 1, false, "nchar", 4, 8),
+                    new NumericColumn("key_part_2", 2, false, "smallint", 5, 10, 0),
+                    new StringColumn("nullable_text", 3, true, "nvarchar", 50, 100),
+                    new NumericColumn("nullable_number", 4, true, "int", 10, 10, 0),
+                    new DateTimeColumn("nullable_datetimeoffset", 5, true, "datetimeoffset", 7),
+                    new NumericColumn("nullable_money", 6, true, "money", 19, 10, 4),
+                    new StringColumn("nullable_varbinary", 7, true, "varbinary", -1, -1),
+                    new StringColumn("nullable_image", 8, true, "image", 2147483647, 2147483647),
                 };
 
-                var expectedKeyColumns = new List<Column>
+                var expectedKeyColumns = new List<ColumnBase>
                 {
-                    new TextColumn
-                    {
-                        Name = "key_part_1",
-                        OrdinalPosition = 1,
-                        Nullable = false,
-                        DataType = "nchar",
-                        CharLength = 4,
-                        ByteLength = 8,
-                    },
-                    new NumericColumn
-                    {
-                        Name = "key_part_2",
-                        OrdinalPosition = 2,
-                        Nullable = false,
-                        DataType = "smallint",
-                        Precision = 5,
-                        Radix = 10,
-                        Scale = 0,
-                    },
+                    new StringColumn("key_part_1", 1, false, "nchar", 4, 8),
+                    new NumericColumn("key_part_2", 2, false, "smallint", 5, 10, 0),
                 };
 
                 // Act
@@ -368,29 +136,11 @@ namespace SqlBulkUpsert.Tests
             // Arrange
             var schema = new SqlTableSchema(
                 Constants.TableName,
-                new List<Column>
+                new List<ColumnBase>
                 {
-                    new NumericColumn
-                    {
-                        Name = "first",
-                        DataType = "int",
-                        OrdinalPosition = 1,
-                        Nullable = false,
-                    },
-                    new TextColumn
-                    {
-                        Name = "second",
-                        DataType = "ntext",
-                        OrdinalPosition = 2,
-                        Nullable = true,
-                    },
-                    new DateColumn
-                    {
-                        Name = "third",
-                        DataType = "datetime2",
-                        OrdinalPosition = 3,
-                        Precision = 4,
-                    }
+                    new NumericColumn("first", 1, false, "int"),
+                    new StringColumn("second", 2, true, "ntext"),
+                    new DateTimeColumn("third", 3, false, "datetime2", 4),
                 },
                 new List<string>());
 
@@ -407,29 +157,11 @@ namespace SqlBulkUpsert.Tests
             // Arrange
             var schema = new SqlTableSchema(
                 Constants.TableName,
-                new List<Column>
+                new List<ColumnBase>
                 {
-                    new NumericColumn
-                    {
-                        Name = "first",
-                        DataType = "int",
-                        OrdinalPosition = 1,
-                        Nullable = false,
-                    },
-                    new TextColumn
-                    {
-                        Name = "second",
-                        DataType = "ntext",
-                        OrdinalPosition = 2,
-                        Nullable = true,
-                    },
-                    new DateColumn
-                    {
-                        Name = "third",
-                        DataType = "datetime2",
-                        OrdinalPosition = 3,
-                        Precision = 4,
-                    }
+                    new NumericColumn("first", 1, false, "int"),
+                    new StringColumn("second", 2, true, "ntext"),
+                    new DateTimeColumn("third", 3, false, "datetime2", 4),
                 },
                 new List<string>());
 
