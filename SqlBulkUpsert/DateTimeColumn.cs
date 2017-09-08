@@ -12,18 +12,16 @@
 
         protected override string ToFullDataTypeString()
         {
-            if (Precision != null)
+            switch (DataType)
             {
-                switch (DataType)
-                {
-                    case "datetimeoffset":
-                    case "datetime2":
-                    case "time":
-                        return $"{DataType}({Precision})";
+                case "datetimeoffset":
+                case "datetime2":
+                case "time":
+                    if (Precision != null) { return $"{DataType}({Precision})"; }
+                    break;
 
-                    default:
-                        break;
-                }
+                default:
+                    break;
             }
 
             return base.ToFullDataTypeString();
