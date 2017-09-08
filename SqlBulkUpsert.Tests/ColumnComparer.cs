@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SqlBulkUpsert.Tests
 {
-    sealed class ColumnComparer : Comparer<Column>
+    sealed class ColumnComparer : Comparer<ColumnBase>
     {
         static bool Equals(NumericColumn x, NumericColumn y)
         {
@@ -11,14 +11,14 @@ namespace SqlBulkUpsert.Tests
                 x.Precision == y.Precision &&
                 x.Radix == y.Radix &&
                 x.Scale == y.Scale &&
-                Equals((Column)x, (Column)y);
+                Equals((ColumnBase)x, (ColumnBase)y);
         }
 
         static bool Equals(DateTimeColumn x, DateTimeColumn y)
         {
             return
                 x.Precision == y.Precision &&
-                Equals((Column)x, (Column)y);
+                Equals((ColumnBase)x, (ColumnBase)y);
         }
 
         static bool Equals(StringColumn x, StringColumn y)
@@ -26,10 +26,10 @@ namespace SqlBulkUpsert.Tests
             return
                 x.CharLength == y.CharLength &&
                 x.ByteLength == y.ByteLength &&
-                Equals((Column)x, (Column)y);
+                Equals((ColumnBase)x, (ColumnBase)y);
         }
 
-        static bool Equals(Column x, Column y)
+        static bool Equals(ColumnBase x, ColumnBase y)
         {
             return
                 x.Name == y.Name &&
@@ -40,7 +40,7 @@ namespace SqlBulkUpsert.Tests
 
         static int ToInt(bool value) => value ? 0 : 1;
 
-        public override int Compare(Column x, Column y)
+        public override int Compare(ColumnBase x, ColumnBase y)
         {
             if (object.Equals(x, y)) { return 0; }
             if (x == null || y == null) { return 1; }

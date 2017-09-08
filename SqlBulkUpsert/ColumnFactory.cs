@@ -5,7 +5,7 @@ namespace SqlBulkUpsert
 {
     static class ColumnFactory
     {
-        public static Column CreateFromReader(IDataReader sqlDataReader)
+        public static ColumnBase CreateFromReader(IDataReader sqlDataReader)
         {
             if (sqlDataReader == null)
                 throw new ArgumentNullException(nameof(sqlDataReader));

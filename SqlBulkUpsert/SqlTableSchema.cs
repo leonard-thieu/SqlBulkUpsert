@@ -72,7 +72,7 @@ WHERE kcu.TABLE_NAME = {TableNameParam};";
             if (sqlDataReader == null)
                 throw new ArgumentNullException(nameof(sqlDataReader));
 
-            var columns = new List<Column>();
+            var columns = new List<ColumnBase>();
             var primaryKeyColumns = new List<string>();
 
             while (await sqlDataReader.ReadAsync(cancellationToken).ConfigureAwait(false))
@@ -94,7 +94,7 @@ WHERE kcu.TABLE_NAME = {TableNameParam};";
 
         internal SqlTableSchema(
             string tableName,
-            IEnumerable<Column> columns,
+            IEnumerable<ColumnBase> columns,
             IEnumerable<string> primaryKeyColumnNames)
         {
             if (columns == null)
@@ -119,8 +119,8 @@ WHERE kcu.TABLE_NAME = {TableNameParam};";
         }
 
         public string TableName { get; }
-        public ICollection<Column> Columns { get; } = new Collection<Column>();
-        public ICollection<Column> PrimaryKeyColumns { get; } = new Collection<Column>();
+        public ICollection<ColumnBase> Columns { get; } = new Collection<ColumnBase>();
+        public ICollection<ColumnBase> PrimaryKeyColumns { get; } = new Collection<ColumnBase>();
 
         public string ToCreateTableCommandText() => $"CREATE TABLE [{TableName}] ({Columns.ToColumnDefinitionListString()});";
 

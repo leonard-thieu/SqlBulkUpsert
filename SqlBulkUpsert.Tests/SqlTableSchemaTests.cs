@@ -63,7 +63,7 @@ namespace SqlBulkUpsert.Tests
 
             var dataTableReader = new DataTableReader(new[] { columnDetail, keyDetail });
 
-            var expectedColumns = new List<Column>
+            var expectedColumns = new List<ColumnBase>
             {
                 new StringColumn("key_part_1", 1, false, "nchar", 4, 8),
                 new NumericColumn("key_part_2", 2, false, "smallint", 5, 10, 0),
@@ -75,7 +75,7 @@ namespace SqlBulkUpsert.Tests
                 new StringColumn("nullable_image", 8, true, "image", 2147483647, 2147483647),
             };
 
-            var expectedKeyColumns = new List<Column>
+            var expectedKeyColumns = new List<ColumnBase>
             {
                 new StringColumn("key_part_1", 1, false, "nchar", 4, 8),
                 new NumericColumn("key_part_2", 2, false, "smallint", 5, 10, 0),
@@ -99,7 +99,7 @@ namespace SqlBulkUpsert.Tests
             // Arrange
             using (var connection = DatabaseHelper.CreateAndOpenConnection(Constants.DatabaseName))
             {
-                var expectedColumns = new List<Column>
+                var expectedColumns = new List<ColumnBase>
                 {
                     new StringColumn("key_part_1", 1, false, "nchar", 4, 8),
                     new NumericColumn("key_part_2", 2, false, "smallint", 5, 10, 0),
@@ -111,7 +111,7 @@ namespace SqlBulkUpsert.Tests
                     new StringColumn("nullable_image", 8, true, "image", 2147483647, 2147483647),
                 };
 
-                var expectedKeyColumns = new List<Column>
+                var expectedKeyColumns = new List<ColumnBase>
                 {
                     new StringColumn("key_part_1", 1, false, "nchar", 4, 8),
                     new NumericColumn("key_part_2", 2, false, "smallint", 5, 10, 0),
@@ -136,7 +136,7 @@ namespace SqlBulkUpsert.Tests
             // Arrange
             var schema = new SqlTableSchema(
                 Constants.TableName,
-                new List<Column>
+                new List<ColumnBase>
                 {
                     new NumericColumn("first", 1, false, "int"),
                     new StringColumn("second", 2, true, "ntext"),
@@ -157,7 +157,7 @@ namespace SqlBulkUpsert.Tests
             // Arrange
             var schema = new SqlTableSchema(
                 Constants.TableName,
-                new List<Column>
+                new List<ColumnBase>
                 {
                     new NumericColumn("first", 1, false, "int"),
                     new StringColumn("second", 2, true, "ntext"),

@@ -2,7 +2,7 @@
 
 namespace SqlBulkUpsert
 {
-    sealed class StringColumn : Column
+    sealed class StringColumn : ColumnBase
     {
         static string HandleMax(int? val)
         {
