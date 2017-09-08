@@ -4,18 +4,6 @@ namespace SqlBulkUpsert
 {
     sealed class StringColumn : ColumnBase
     {
-        static string HandleMax(int? val)
-        {
-            if (!val.HasValue)
-                throw new InvalidOperationException("Expected column length.");
-
-            var value = val.Value;
-
-            return value == -1 ?
-                "max" :
-                Convert.ToString(val);
-        }
-
         public StringColumn(string name, int ordinalPosition, bool isNullable, string dataType, int? charLength = null, int? byteLength = null) :
             base(name, ordinalPosition, isNullable, dataType)
         {
@@ -42,6 +30,13 @@ namespace SqlBulkUpsert
 
                 default:
                     return base.ToFullDataTypeString();
+            }
+
+            string HandleMax(int? value)
+            {
+                return value == -1 ?
+                    "max" :
+                    Convert.ToString(value);
             }
         }
     }

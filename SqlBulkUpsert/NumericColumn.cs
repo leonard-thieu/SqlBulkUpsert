@@ -25,9 +25,10 @@
                 case "float":
                 case "real":
                     return $"{DataType}({Radix})";
-            }
 
-            return base.ToFullDataTypeString();
+                default:
+                    return base.ToFullDataTypeString();
+            }
         }
     }
 }

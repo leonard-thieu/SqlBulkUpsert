@@ -78,14 +78,19 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ColumnBaseTests.cs" />
     <Compile Include="ColumnComparer.cs" />
+    <Compile Include="ColumnFactoryTests.cs" />
     <Compile Include="ColumnMappingsTests.cs" />
     <Compile Include="ColumnTests.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="DatabaseHelper.cs" />
     <Compile Include="DatabaseTestsBase.cs" />
+    <Compile Include="DateTimeColumnTests.cs" />
+    <Compile Include="NumericColumnTests.cs" />
     <Compile Include="SqlCommandExceptionTests.cs" />
     <Compile Include="SqlTableSchemaTests.cs" />
+    <Compile Include="StringColumnTests.cs" />
     <Compile Include="TypedUpserterTests.cs" />
   </ItemGroup>
   <ItemGroup>
