@@ -59,7 +59,7 @@ namespace SqlBulkUpsert
         public async Task<int> UpsertAsync(
             SqlConnection connection,
             IEnumerable<T> items,
-            bool updateOnMatch,
+            bool updateWhenMatched,
             CancellationToken cancellationToken = default(CancellationToken))
         {
             if (connection == null)
@@ -74,7 +74,7 @@ namespace SqlBulkUpsert
 
                 var targetTableSchema = await SqlTableSchema.LoadFromDatabaseAsync(connection, columnMappings.TableName, cancellationToken).ConfigureAwait(false);
 
-                return await tempTable.MergeAsync(targetTableSchema, updateOnMatch, cancellationToken).ConfigureAwait(false);
+                return await tempTable.MergeAsync(targetTableSchema, updateWhenMatched, cancellationToken).ConfigureAwait(false);
             }
         }
 

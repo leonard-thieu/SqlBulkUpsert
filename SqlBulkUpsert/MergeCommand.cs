@@ -9,16 +9,16 @@ namespace SqlBulkUpsert
         public MergeCommand(
             string tableSource,
             SqlTableSchema targetTableSchema,
-            bool updateOnMatch)
+            bool updateWhenMatched)
         {
             this.targetTableSchema = targetTableSchema ?? throw new ArgumentNullException(nameof(targetTableSchema));
             this.tableSource = tableSource ?? throw new ArgumentNullException(nameof(tableSource));
-            this.updateOnMatch = updateOnMatch;
+            this.updateWhenMatched = updateWhenMatched;
         }
 
         readonly SqlTableSchema targetTableSchema;
         readonly string tableSource;
-        readonly bool updateOnMatch;
+        readonly bool updateWhenMatched;
 
         public override string ToString()
         {
@@ -34,7 +34,7 @@ namespace SqlBulkUpsert
             sb.AppendLine($"USING [{tableSource}] AS [Source]");
             sb.AppendLine($"    ON ({mergeSearchCondition})");
 
-            if (updateOnMatch)
+            if (updateWhenMatched)
             {
                 sb.AppendLine("WHEN MATCHED");
                 sb.AppendLine("    THEN");

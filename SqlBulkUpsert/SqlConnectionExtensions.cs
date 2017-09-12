@@ -20,8 +20,7 @@ namespace SqlBulkUpsert
 
             using (var command = SqlCommandAdapter.FromConnection(connection))
             {
-                command.CommandText = $@"
-SELECT Count(*) 
+                command.CommandText = $@"SELECT Count(*) 
 FROM [{tableName}];";
 
                 var scalar = await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
@@ -47,8 +46,7 @@ FROM [{tableName}];";
 
             using (var command = SqlCommandAdapter.FromConnection(connection))
             {
-                command.CommandText = $@"
-ALTER VIEW [{viewName}]
+                command.CommandText = $@"ALTER VIEW [{viewName}]
 AS
 
 SELECT {tableSchema.Columns.ToSelectListString()}
@@ -102,6 +100,7 @@ FROM [{tableName}];";
                 throw new ArgumentNullException(nameof(connection));
             if (tableName == null)
                 throw new ArgumentNullException(nameof(tableName));
+
             switch (action)
             {
                 case "DISABLE":
@@ -113,8 +112,7 @@ FROM [{tableName}];";
 
             using (var command = SqlCommandAdapter.FromConnection(connection))
             {
-                command.CommandText = $@"
-DECLARE @sql AS VARCHAR(MAX)='';
+                command.CommandText = $@"DECLARE @sql AS VARCHAR(MAX)='';
 
 SELECT @sql = @sql + 'ALTER INDEX ' + sys.indexes.name + ' ON ' + sys.objects.name + ' {action};' + CHAR(13) + CHAR(10)
 FROM sys.indexes
