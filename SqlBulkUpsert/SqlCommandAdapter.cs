@@ -92,7 +92,17 @@ namespace SqlBulkUpsert
         /// </summary>
         /// <param name="cancellationToken">The cancellation instruction.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        public Task<object> ExecuteScalarAsync(CancellationToken cancellationToken) => command.ExecuteScalarAsync(cancellationToken);
+        public Task<object> ExecuteScalarAsync(CancellationToken cancellationToken)
+        {
+            try
+            {
+                return command.ExecuteScalarAsync(cancellationToken);
+            }
+            catch (SqlException ex)
+            {
+                throw new SqlCommandException(ex.Message, ex, CommandText);
+            }
+        }
 
         #region IDisposable Members
 
