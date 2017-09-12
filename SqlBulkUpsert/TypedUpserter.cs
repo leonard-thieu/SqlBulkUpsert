@@ -39,6 +39,7 @@ namespace SqlBulkUpsert
             }
 
             await connection.DisableNonclusteredIndexesAsync(stagingTableName, cancellationToken).ConfigureAwait(false);
+            await connection.TruncateTableAsync(stagingTableName, cancellationToken).ConfigureAwait(false);
             using (var dataReader = new TypedDataReader<T>(columnMappings, items))
             {
                 await BulkCopyAsync(connection, stagingTableName, dataReader, cancellationToken).ConfigureAwait(false);
@@ -46,7 +47,6 @@ namespace SqlBulkUpsert
             await connection.RebuildNonclusteredIndexesAsync(stagingTableName, cancellationToken).ConfigureAwait(false);
 
             await connection.SwitchTableAsync(viewName, stagingTableName, cancellationToken).ConfigureAwait(false);
-            await connection.TruncateTableAsync(activeTableName, cancellationToken).ConfigureAwait(false);
 
             return items.Count();
         }
