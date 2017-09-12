@@ -56,25 +56,16 @@ namespace SqlBulkUpsert
 
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        void Dispose(bool disposing)
-        {
             if (disposed)
                 return;
 
-            if (disposing)
+            // Drops non-temporary "temporary" tables
+            if (Name != null && !Name.StartsWith("#", StringComparison.OrdinalIgnoreCase))
             {
-                // Drops non-temporary "temporary" tables
-                if (Name != null && !Name.StartsWith("#", StringComparison.OrdinalIgnoreCase))
+                using (var command = SqlCommandAdapter.FromConnection(connection))
                 {
-                    using (var command = SqlCommandAdapter.FromConnection(connection))
-                    {
-                        command.CommandText = $"DROP TABLE [{Name}];";
-                        command.ExecuteNonQuery();
-                    }
+                    command.CommandText = $"DROP TABLE [{Name}];";
+                    command.ExecuteNonQuery();
                 }
             }
 

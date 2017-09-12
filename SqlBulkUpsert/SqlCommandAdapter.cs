@@ -113,19 +113,10 @@ namespace SqlBulkUpsert
         /// </summary>
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        void Dispose(bool disposing)
-        {
             if (disposed)
                 return;
 
-            if (disposing)
-            {
-                command.Dispose();
-            }
+            command.Dispose();
 
             disposed = true;
         }
