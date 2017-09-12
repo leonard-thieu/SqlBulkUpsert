@@ -65,7 +65,7 @@ namespace SqlBulkUpsert
             using (var tempTable = await TemporaryTable.CreateAsync(connection, columnMappings.TableName, cancellationToken).ConfigureAwait(false))
             using (var dataReader = new TypedDataReader<T>(columnMappings, items))
             {
-                await BulkCopyAsync(connection, columnMappings.TableName, dataReader, cancellationToken).ConfigureAwait(false);
+                await BulkCopyAsync(connection, tempTable.Name, dataReader, cancellationToken).ConfigureAwait(false);
 
                 var targetTableSchema = await SqlTableSchema.LoadFromDatabaseAsync(connection, columnMappings.TableName, cancellationToken).ConfigureAwait(false);
 
