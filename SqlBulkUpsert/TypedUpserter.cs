@@ -39,6 +39,9 @@ namespace SqlBulkUpsert
             }
 
             await connection.DisableNonclusteredIndexesAsync(stagingTableName, cancellationToken).ConfigureAwait(false);
+            // Cannot assume that the staging table is empty even though it's truncated afterwards.
+            // This can happen when initially working with a database that was modified by older code. Older code 
+            // truncated at the beginning instead of after.
             await connection.TruncateTableAsync(stagingTableName, cancellationToken).ConfigureAwait(false);
             using (var dataReader = new TypedDataReader<T>(columnMappings, items))
             {
@@ -47,6 +50,8 @@ namespace SqlBulkUpsert
             await connection.RebuildNonclusteredIndexesAsync(stagingTableName, cancellationToken).ConfigureAwait(false);
 
             await connection.SwitchTableAsync(viewName, stagingTableName, cancellationToken).ConfigureAwait(false);
+            // Active table is now the new staging table
+            await connection.TruncateTableAsync(activeTableName, cancellationToken).ConfigureAwait(false);
 
             return items.Count();
         }
