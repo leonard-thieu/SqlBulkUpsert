@@ -91,6 +91,7 @@
     <Compile Include="IEnumerableColumnBaseExtensionsTests.cs" />
     <Compile Include="MergeCommandTests.cs" />
     <Compile Include="NumericColumnTests.cs" />
+    <Compile Include="SqlCommandAdapterTests.cs" />
     <Compile Include="SqlCommandExceptionTests.cs" />
     <Compile Include="SqlTableSchemaTests.cs" />
     <Compile Include="StringColumnTests.cs" />
