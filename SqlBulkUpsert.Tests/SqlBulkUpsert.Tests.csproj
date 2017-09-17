@@ -93,8 +93,10 @@
     <Compile Include="NumericColumnTests.cs" />
     <Compile Include="SqlCommandAdapterTests.cs" />
     <Compile Include="SqlCommandExceptionTests.cs" />
+    <Compile Include="SqlConnectionExtensionsTests.cs" />
     <Compile Include="SqlTableSchemaTests.cs" />
     <Compile Include="StringColumnTests.cs" />
+    <Compile Include="TypedDataReaderTests.cs" />
     <Compile Include="TypedUpserterTests.cs" />
   </ItemGroup>
   <ItemGroup>
