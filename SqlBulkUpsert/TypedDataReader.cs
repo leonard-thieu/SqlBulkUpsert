@@ -10,27 +10,30 @@ namespace SqlBulkUpsert
     {
         public TypedDataReader(ColumnMappings<T> columnMappings, IEnumerable<T> items)
         {
-            if (columnMappings == null)
-                throw new ArgumentNullException(nameof(columnMappings));
             if (items == null)
                 throw new ArgumentNullException(nameof(items));
 
-            mappingLookup = columnMappings.Keys
-                .Select((s, i) => new { Key = s, Value = i })
-                .ToDictionary(x => x.Key, x => x.Value);
-            mappingFuncs = columnMappings.Values.ToList();
+            this.columnMappings = columnMappings ?? throw new ArgumentNullException(nameof(columnMappings));
             this.items = items.GetEnumerator();
         }
 
-        readonly Dictionary<string, int> mappingLookup;
-        readonly IList<Func<T, object>> mappingFuncs;
+        readonly ColumnMappings<T> columnMappings;
         readonly IEnumerator<T> items;
 
-        public object GetValue(int i) => mappingFuncs[i](items.Current);
+        public object GetValue(int i)
+        {
+            var columnMapping = columnMappings[i];
+            var func = columnMapping.Value;
 
-        public int GetOrdinal(string name) => mappingLookup[name];
+            return func(items.Current);
+        }
 
-        public int FieldCount => mappingFuncs.Count;
+        public int GetOrdinal(string name)
+        {
+            return columnMappings.Columns.ToList().IndexOf(name);
+        }
+
+        public int FieldCount => columnMappings.Count;
 
         public bool Read() => items.MoveNext();
 

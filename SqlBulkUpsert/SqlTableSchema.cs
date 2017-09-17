@@ -28,8 +28,7 @@ namespace SqlBulkUpsert
             {
                 const string TableNameParam = "@tableName";
 
-                sqlCommand.CommandText = $@"
-USE [{connection.Database}];
+                sqlCommand.CommandText = $@"USE [{connection.Database}];
 
 -- Check table exists
 SELECT *
@@ -59,19 +58,16 @@ WHERE kcu.TABLE_NAME = {TableNameParam};";
 
                     await sqlDataReader.NextResultAsync(cancellationToken).ConfigureAwait(false);
 
-                    return await LoadFromReaderAsync(tableName, sqlDataReader, cancellationToken).ConfigureAwait(false);
+                    return await LoadFromReaderAsync(sqlDataReader, tableName, cancellationToken).ConfigureAwait(false);
                 }
             }
         }
 
         internal static async Task<SqlTableSchema> LoadFromReaderAsync(
-            string tableName,
             DbDataReader sqlDataReader,
+            string tableName,
             CancellationToken cancellationToken)
         {
-            if (sqlDataReader == null)
-                throw new ArgumentNullException(nameof(sqlDataReader));
-
             var columns = new List<ColumnBase>();
             var primaryKeyColumns = new List<string>();
 
@@ -97,13 +93,6 @@ WHERE kcu.TABLE_NAME = {TableNameParam};";
             IEnumerable<ColumnBase> columns,
             IEnumerable<string> primaryKeyColumnNames)
         {
-            if (columns == null)
-                throw new ArgumentNullException(nameof(columns));
-            if (!columns.Any())
-                throw new ArgumentException();
-            if (primaryKeyColumnNames == null)
-                throw new ArgumentNullException(nameof(primaryKeyColumnNames));
-
             TableName = tableName ?? throw new ArgumentNullException(nameof(tableName));
 
             foreach (var column in columns)
@@ -121,9 +110,5 @@ WHERE kcu.TABLE_NAME = {TableNameParam};";
         public string TableName { get; }
         public ICollection<ColumnBase> Columns { get; } = new Collection<ColumnBase>();
         public ICollection<ColumnBase> PrimaryKeyColumns { get; } = new Collection<ColumnBase>();
-
-        public string ToCreateTableCommandText() => $"CREATE TABLE [{TableName}] ({Columns.ToColumnDefinitionListString()});";
-
-        public string ToDropTableCommandText() => $"DROP TABLE [{TableName}];";
     }
 }

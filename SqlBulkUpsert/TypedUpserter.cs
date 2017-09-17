@@ -89,7 +89,7 @@ namespace SqlBulkUpsert
                 sqlBulkCopy.BulkCopyTimeout = 0;
                 sqlBulkCopy.DestinationTableName = tableName;
 
-                foreach (var columnName in columnMappings.Keys)
+                foreach (var columnName in columnMappings.Columns)
                 {
                     sqlBulkCopy.ColumnMappings.Add(columnName, columnName);
                 }
