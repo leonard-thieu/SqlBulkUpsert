@@ -2,8 +2,7 @@
 
 namespace SqlBulkUpsert.Tests
 {
-    [TestCategory("Integration")]
-    [TestCategory("Database")]
+    [TestCategory("Uses SQL Server")]
     public abstract class DatabaseTestsBase
     {
         [TestInitialize]
