@@ -36,14 +36,14 @@ namespace SqlBulkUpsert
 
             if (updateWhenMatched)
             {
-                sb.AppendLine("WHEN MATCHED");
-                sb.AppendLine("    THEN");
-                sb.AppendLine("        UPDATE");
+                sb.AppendLine($"WHEN MATCHED");
+                sb.AppendLine($"    THEN");
+                sb.AppendLine($"        UPDATE");
                 sb.AppendLine($"        SET {setClause}");
             }
 
-            sb.AppendLine("WHEN NOT MATCHED");
-            sb.AppendLine("    THEN");
+            sb.AppendLine($"WHEN NOT MATCHED");
+            sb.AppendLine($"    THEN");
             sb.AppendLine($"        INSERT ({columnList})");
             sb.AppendLine($"        VALUES ({valuesList});");
 

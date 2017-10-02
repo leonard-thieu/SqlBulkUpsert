@@ -113,10 +113,10 @@ namespace SqlBulkUpsert.Tests
         }
 
         [TestClass]
-        public class EndToEnd : DatabaseTestsBase
+        public class IntegrationTests : DatabaseTestsBase
         {
             [TestMethod]
-            public async Task EndToEndTest()
+            public async Task EndToEnd()
             {
                 // Arrange
                 var columnMappings = new ColumnMappings<TestDto>(Constants.TableName)
@@ -147,10 +147,7 @@ namespace SqlBulkUpsert.Tests
                 using (var connection = DatabaseHelper.CreateAndOpenConnection(Constants.DatabaseName))
                 {
                     // Act
-                    await upserter.UpsertAsync(
-                        connection,
-                        items,
-                        updateWhenMatched: false);
+                    await upserter.UpsertAsync(connection, items, updateWhenMatched: false);
 
                     // Assert
                     foreach (var testDto in items)
