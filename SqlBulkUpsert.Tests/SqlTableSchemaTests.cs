@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
 using System.Data.SqlClient;
 using System.Threading;
 using System.Threading.Tasks;
@@ -128,10 +127,7 @@ namespace SqlBulkUpsert.Tests
                     // Act -> Assert
                     await Assert.ThrowsExceptionAsync<InvalidOperationException>(() =>
                     {
-                        return SqlTableSchema.LoadFromDatabaseAsync(
-                            connection,
-                            "DoesNotExist",
-                            CancellationToken.None);
+                        return SqlTableSchema.LoadFromDatabaseAsync(connection, "DoesNotExist", CancellationToken.None);
                     });
                 }
             }
@@ -143,22 +139,22 @@ namespace SqlBulkUpsert.Tests
                 using (var connection = DatabaseHelper.CreateAndOpenConnection(Constants.DatabaseName))
                 {
                     var expectedColumns = new List<ColumnBase>
-                {
-                    new StringColumn("key_part_1", 1, false, "nchar", 4, 8),
-                    new NumericColumn("key_part_2", 2, false, "smallint", 5, 10, 0),
-                    new StringColumn("nullable_text", 3, true, "nvarchar", 50, 100),
-                    new NumericColumn("nullable_number", 4, true, "int", 10, 10, 0),
-                    new DateTimeColumn("nullable_datetimeoffset", 5, true, "datetimeoffset", 7),
-                    new NumericColumn("nullable_money", 6, true, "money", 19, 10, 4),
-                    new StringColumn("nullable_varbinary", 7, true, "varbinary", -1, -1),
-                    new StringColumn("nullable_image", 8, true, "image", 2147483647, 2147483647),
-                };
+                    {
+                        new StringColumn("key_part_1", 1, false, "nchar", 4, 8),
+                        new NumericColumn("key_part_2", 2, false, "smallint", 5, 10, 0),
+                        new StringColumn("nullable_text", 3, true, "nvarchar", 50, 100),
+                        new NumericColumn("nullable_number", 4, true, "int", 10, 10, 0),
+                        new DateTimeColumn("nullable_datetimeoffset", 5, true, "datetimeoffset", 7),
+                        new NumericColumn("nullable_money", 6, true, "money", 19, 10, 4),
+                        new StringColumn("nullable_varbinary", 7, true, "varbinary", -1, -1),
+                        new StringColumn("nullable_image", 8, true, "image", 2147483647, 2147483647),
+                    };
 
                     var expectedKeyColumns = new List<ColumnBase>
-                {
-                    new StringColumn("key_part_1", 1, false, "nchar", 4, 8),
-                    new NumericColumn("key_part_2", 2, false, "smallint", 5, 10, 0),
-                };
+                    {
+                        new StringColumn("key_part_1", 1, false, "nchar", 4, 8),
+                        new NumericColumn("key_part_2", 2, false, "smallint", 5, 10, 0),
+                    };
 
                     // Act
                     SqlTableSchema schema = await SqlTableSchema.LoadFromDatabaseAsync(connection, Constants.TableName, CancellationToken.None);
