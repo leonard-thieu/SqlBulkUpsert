@@ -17,7 +17,7 @@ namespace SqlBulkUpsert
 
             var ordinal = reader.GetOrdinal(columnName);
             if (reader.IsDBNull(ordinal))
-                return default(T);
+                return default;
             return (T)reader.GetValue(ordinal);
         }
     }

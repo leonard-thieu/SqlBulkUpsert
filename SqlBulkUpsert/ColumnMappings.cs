@@ -23,8 +23,7 @@ namespace SqlBulkUpsert
 
             // Get name of column
             MemberExpression operand;
-            var box = mapping.Body as UnaryExpression;
-            if (box != null)
+            if (mapping.Body is UnaryExpression box)
             {
                 // Value types need to be unboxed
                 operand = (MemberExpression)box.Operand;

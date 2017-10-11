@@ -10,11 +10,11 @@ namespace SqlBulkUpsert
         Task<int> InsertAsync(
             SqlConnection connection,
             IEnumerable<T> items,
-            CancellationToken cancellationToken = default(CancellationToken));
+            CancellationToken cancellationToken = default);
         Task<int> UpsertAsync(
             SqlConnection connection,
             IEnumerable<T> items,
             bool updateOnMatch,
-            CancellationToken cancellationToken = default(CancellationToken));
+            CancellationToken cancellationToken = default);
     }
 }

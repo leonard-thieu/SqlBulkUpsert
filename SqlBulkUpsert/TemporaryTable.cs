@@ -39,7 +39,7 @@ namespace SqlBulkUpsert
         public async Task<int> MergeAsync(
             SqlTableSchema targetTableSchema,
             bool updateWhenMatched,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             using (var command = SqlCommandAdapter.FromConnection(connection))
             {

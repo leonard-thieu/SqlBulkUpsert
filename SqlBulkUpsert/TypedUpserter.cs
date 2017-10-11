@@ -20,7 +20,7 @@ namespace SqlBulkUpsert
         public async Task<int> InsertAsync(
             SqlConnection connection,
             IEnumerable<T> items,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             if (connection == null)
                 throw new ArgumentNullException(nameof(connection));
@@ -60,7 +60,7 @@ namespace SqlBulkUpsert
             SqlConnection connection,
             IEnumerable<T> items,
             bool updateWhenMatched,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
         {
             if (connection == null)
                 throw new ArgumentNullException(nameof(connection));
