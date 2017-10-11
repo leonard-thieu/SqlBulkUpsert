@@ -143,6 +143,14 @@ namespace SqlBulkUpsert.Tests
                         Date = new DateTimeOffset(new DateTime(2010, 11, 14, 12, 0, 0), TimeSpan.FromHours(i)),
                     });
                 }
+                items.Add(new TestDto
+                {
+                    KeyPart1 = "TEST",
+                    KeyPart2 = 11,
+                    Text = null,
+                    Number = null,
+                    Date = null,
+                });
 
                 using (var connection = DatabaseHelper.CreateAndOpenConnection(Constants.DatabaseName))
                 {
@@ -150,9 +158,46 @@ namespace SqlBulkUpsert.Tests
                     await upserter.UpsertAsync(connection, items, updateWhenMatched: false);
 
                     // Assert
-                    foreach (var testDto in items)
+                    var items2 = new List<TestDto>();
+                    using (var command = connection.CreateCommand())
                     {
-                        Assert.AreEqual(testDto.Number, testDto.KeyPart2);
+                        command.CommandText = @"SELECT [key_part_1]
+      ,[key_part_2]
+      ,[nullable_text]
+      ,[nullable_number]
+      ,[nullable_datetimeoffset]
+      ,[nullable_money]
+      ,[nullable_varbinary]
+      ,[nullable_image]
+  FROM [SqlBulkUpsertTestDb].[dbo].[TestUpsert]";
+
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            while (reader.Read())
+                            {
+                                var item = new TestDto();
+
+                                item.KeyPart1 = reader.GetString(0);
+                                item.KeyPart2 = reader.GetInt16(1);
+                                item.Text = reader.IsDBNull(2) ? null : reader.GetString(2);
+                                item.Number = reader.IsDBNull(3) ? (int?)null : reader.GetInt32(3);
+                                item.Date = reader.IsDBNull(4) ? (DateTimeOffset?)null : reader.GetDateTimeOffset(4);
+
+                                items2.Add(item);
+                            }
+                        }
+                    }
+
+                    for (int i = 0; i < items.Count; i++)
+                    {
+                        var item1 = items[i];
+                        var item2 = items2[i];
+
+                        Assert.AreEqual(item1.KeyPart1, item2.KeyPart1);
+                        Assert.AreEqual(item1.KeyPart2, item2.KeyPart2);
+                        Assert.AreEqual(item1.Text, item2.Text);
+                        Assert.AreEqual(item1.Number, item2.Number);
+                        Assert.AreEqual(item1.Date, item2.Date);
                     }
                 }
             }
@@ -162,8 +207,8 @@ namespace SqlBulkUpsert.Tests
                 public string KeyPart1 { get; set; }
                 public short KeyPart2 { get; set; }
                 public string Text { get; set; }
-                public int Number { get; set; }
-                public DateTimeOffset Date { get; set; }
+                public int? Number { get; set; }
+                public DateTimeOffset? Date { get; set; }
             }
         }
     }
