@@ -31,8 +31,8 @@ namespace SqlBulkUpsert
 
             var stagingTableName = $"{viewName}_A";
             var activeTableName = $"{viewName}_B";
-            var rowCount = await connection.GetRowCountAsync(stagingTableName, cancellationToken).ConfigureAwait(false);
-            if (rowCount != 0)
+            var count = await connection.CountAsync(stagingTableName, cancellationToken).ConfigureAwait(false);
+            if (count != 0)
             {
                 stagingTableName = $"{viewName}_B";
                 activeTableName = $"{viewName}_A";
@@ -49,7 +49,8 @@ namespace SqlBulkUpsert
             }
             await connection.RebuildNonclusteredIndexesAsync(stagingTableName, cancellationToken).ConfigureAwait(false);
 
-            await connection.SwitchTableAsync(viewName, stagingTableName, cancellationToken).ConfigureAwait(false);
+            var schema = await connection.SelectTableSchemaAsync(stagingTableName, cancellationToken).ConfigureAwait(false);
+            await connection.SwitchTableAsync(viewName, stagingTableName, schema.Columns, cancellationToken).ConfigureAwait(false);
             // Active table is now the new staging table
             await connection.TruncateTableAsync(activeTableName, cancellationToken).ConfigureAwait(false);
 
@@ -67,14 +68,16 @@ namespace SqlBulkUpsert
             if (items == null)
                 throw new ArgumentNullException(nameof(items));
 
-            using (var tempTable = await TemporaryTable.CreateAsync(connection, columnMappings.TableName, cancellationToken).ConfigureAwait(false))
+            var baseTableName = columnMappings.TableName;
+            var tempTableName = $"#{baseTableName}";
+            await connection.SelectIntoTemporaryTableAsync(baseTableName, tempTableName, cancellationToken).ConfigureAwait(false);
             using (var dataReader = new TypedDataReader<T>(columnMappings, items))
             {
-                await BulkCopyAsync(connection, tempTable.Name, dataReader, cancellationToken).ConfigureAwait(false);
+                await BulkCopyAsync(connection, tempTableName, dataReader, cancellationToken).ConfigureAwait(false);
 
-                var targetTableSchema = await SqlTableSchema.LoadFromDatabaseAsync(connection, columnMappings.TableName, cancellationToken).ConfigureAwait(false);
+                var targetTableSchema = await connection.SelectTableSchemaAsync(baseTableName, cancellationToken).ConfigureAwait(false);
 
-                return await tempTable.MergeAsync(targetTableSchema, updateWhenMatched, cancellationToken).ConfigureAwait(false);
+                return await connection.MergeAsync(tempTableName, targetTableSchema, updateWhenMatched, cancellationToken).ConfigureAwait(false);
             }
         }
 
