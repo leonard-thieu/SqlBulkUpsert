@@ -74,11 +74,10 @@ namespace SqlBulkUpsert
             using (var dataReader = new TypedDataReader<T>(columnMappings, items))
             {
                 await BulkCopyAsync(connection, tempTableName, dataReader, cancellationToken).ConfigureAwait(false);
-
-                var targetTableSchema = await connection.SelectTableSchemaAsync(baseTableName, cancellationToken).ConfigureAwait(false);
-
-                return await connection.MergeAsync(tempTableName, targetTableSchema, updateWhenMatched, cancellationToken).ConfigureAwait(false);
             }
+            var targetTableSchema = await connection.SelectTableSchemaAsync(baseTableName, cancellationToken).ConfigureAwait(false);
+
+            return await connection.MergeAsync(tempTableName, targetTableSchema, updateWhenMatched, cancellationToken).ConfigureAwait(false);
         }
 
         async Task BulkCopyAsync(
@@ -87,7 +86,7 @@ namespace SqlBulkUpsert
             IDataReader data,
             CancellationToken cancellationToken)
         {
-            using (var sqlBulkCopy = new SqlBulkCopy(connection, SqlBulkCopyOptions.TableLock, null))
+            using (var sqlBulkCopy = new SqlBulkCopy(connection, SqlBulkCopyOptions.TableLock & SqlBulkCopyOptions.KeepNulls, null))
             {
                 sqlBulkCopy.BulkCopyTimeout = 0;
                 sqlBulkCopy.DestinationTableName = tableName;
