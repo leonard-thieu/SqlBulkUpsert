@@ -122,7 +122,7 @@ namespace SqlBulkUpsert.Tests
             public async Task RetrieveTableSchemaNotExist()
             {
                 // Arrange
-                using (var connection = DatabaseHelper.CreateAndOpenConnection())
+                using (var connection = await DatabaseHelper.CreateAndOpenConnectionAsync())
                 {
                     // Act -> Assert
                     await Assert.ThrowsExceptionAsync<InvalidOperationException>(() =>
@@ -136,7 +136,7 @@ namespace SqlBulkUpsert.Tests
             public async Task RetrieveTableSchema()
             {
                 // Arrange
-                using (var connection = DatabaseHelper.CreateAndOpenConnection(Constants.DatabaseName))
+                using (var connection = await DatabaseHelper.CreateAndOpenConnectionAsync(Constants.DatabaseName))
                 {
                     var expectedColumns = new List<ColumnBase>
                     {

@@ -152,7 +152,7 @@ namespace SqlBulkUpsert.Tests
                     Date = null,
                 });
 
-                using (var connection = DatabaseHelper.CreateAndOpenConnection(Constants.DatabaseName))
+                using (var connection = await DatabaseHelper.CreateAndOpenConnectionAsync(Constants.DatabaseName))
                 {
                     // Act
                     await upserter.UpsertAsync(connection, items, updateWhenMatched: false);

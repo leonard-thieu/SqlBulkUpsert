@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace SqlBulkUpsert.Tests
 {
@@ -6,15 +7,15 @@ namespace SqlBulkUpsert.Tests
     public abstract class DatabaseTestsBase
     {
         [TestInitialize]
-        public void TestInitialize()
+        public async Task TestInitialize()
         {
-            DatabaseHelper.CreateDatabase();
+            await DatabaseHelper.CreateDatabaseAsync().ConfigureAwait(false);
         }
 
         [TestCleanup]
-        public void TestCleanup()
+        public async Task TestCleanup()
         {
-            DatabaseHelper.DropDatabase();
+            await DatabaseHelper.DropDatabaseAsync().ConfigureAwait(false);
         }
     }
 }

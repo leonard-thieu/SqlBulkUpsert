@@ -8,13 +8,27 @@ namespace SqlBulkUpsert
 {
     static class SqlConnectionExtensions
     {
+        public static async Task UseAsync(
+            this SqlConnection connection,
+            string databaseName,
+            CancellationToken cancellationToken = default)
+        {
+            if (databaseName == null)
+                throw new ArgumentNullException(nameof(databaseName));
+
+            using (var command = SqlCommandAdapter.FromConnection(connection))
+            {
+                command.CommandText = $"USE [{databaseName}];";
+
+                await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+            }
+        }
+
         public static async Task<int> GetRowCountAsync(
             this SqlConnection connection,
             string tableName,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken = default)
         {
-            if (connection == null)
-                throw new ArgumentNullException(nameof(connection));
             if (tableName == null)
                 throw new ArgumentNullException(nameof(tableName));
 
@@ -33,10 +47,8 @@ FROM [{tableName}];";
             this SqlConnection connection,
             string viewName,
             string tableName,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken = default)
         {
-            if (connection == null)
-                throw new ArgumentNullException(nameof(connection));
             if (viewName == null)
                 throw new ArgumentNullException(nameof(viewName));
             if (tableName == null)
@@ -59,10 +71,8 @@ FROM [{tableName}];";
         public static async Task TruncateTableAsync(
             this SqlConnection connection,
             string tableName,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken = default)
         {
-            if (connection == null)
-                throw new ArgumentNullException(nameof(connection));
             if (tableName == null)
                 throw new ArgumentNullException(nameof(tableName));
 
@@ -77,7 +87,7 @@ FROM [{tableName}];";
         public static Task DisableNonclusteredIndexesAsync(
             this SqlConnection connection,
             string tableName,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken = default)
         {
             return AlterNonclusteredIndexesAsync(connection, tableName, "DISABLE", cancellationToken);
         }
@@ -85,7 +95,7 @@ FROM [{tableName}];";
         public static Task RebuildNonclusteredIndexesAsync(
             this SqlConnection connection,
             string tableName,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken = default)
         {
             return AlterNonclusteredIndexesAsync(connection, tableName, "REBUILD", cancellationToken);
         }
@@ -94,10 +104,8 @@ FROM [{tableName}];";
             this SqlConnection connection,
             string tableName,
             string action,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken = default)
         {
-            if (connection == null)
-                throw new ArgumentNullException(nameof(connection));
             if (tableName == null)
                 throw new ArgumentNullException(nameof(tableName));
 
