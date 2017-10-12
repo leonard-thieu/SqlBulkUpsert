@@ -25,7 +25,7 @@ namespace SqlBulkUpsert.Tests
                 // Act -> Assert
                 await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
                 {
-                    return SqlConnectionExtensions.CountAsync(connection, databaseName);
+                    return SqlConnectionExtensions.UseAsync(connection, databaseName);
                 });
             }
 
@@ -39,7 +39,7 @@ namespace SqlBulkUpsert.Tests
                 // Act -> Assert
                 await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
                 {
-                    return SqlConnectionExtensions.CountAsync(connection, databaseName);
+                    return SqlConnectionExtensions.UseAsync(connection, databaseName);
                 });
             }
         }
