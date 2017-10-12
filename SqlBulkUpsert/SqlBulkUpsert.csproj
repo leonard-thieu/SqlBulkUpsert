@@ -57,13 +57,11 @@
     <Compile Include="TypedUpserter.cs">
       <DependentUpon>ITypedUpserter.cs</DependentUpon>
     </Compile>
-    <Compile Include="MergeCommand.cs" />
     <Compile Include="NumericColumn.cs" />
     <Compile Include="SqlCommandException.cs" />
     <Compile Include="SqlCommandAdapter.cs" />
     <Compile Include="SqlConnectionExtensions.cs" />
     <Compile Include="SqlTableSchema.cs" />
-    <Compile Include="TemporaryTable.cs" />
     <Compile Include="StringColumn.cs" />
     <Compile Include="TypedDataReader.cs" />
   </ItemGroup>

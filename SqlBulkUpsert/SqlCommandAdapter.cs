@@ -71,11 +71,32 @@ namespace SqlBulkUpsert
         /// Executes a Transact-SQL statement against the connection and returns the number of rows affected.
         /// </summary>
         /// <returns>The number of rows affected.</returns>
-        public Task<int> ExecuteNonQueryAsync(CancellationToken cancellationToken)
+        public async Task<int> ExecuteNonQueryAsync(CancellationToken cancellationToken)
         {
             try
             {
-                return command.ExecuteNonQueryAsync(cancellationToken);
+                return await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+            }
+            catch (SqlException ex)
+            {
+                throw new SqlCommandException(ex.Message, ex, CommandText);
+            }
+        }
+
+        /// <summary>
+        /// An asynchronous version of <see cref="SqlCommand.ExecuteReader()"/>, which
+        /// sends the <see cref="CommandText"/> to the <see cref="SqlCommand.Connection"/>
+        /// and builds a <see cref="SqlDataReader"/>.The cancellation token can be
+        /// used to request that the operation be abandoned before the command timeout elapses.
+        /// Exceptions will be reported via the returned <see cref="Task"/> object.
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation instruction.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        public async Task<SqlDataReader> ExecuteReaderAsync(CancellationToken cancellationToken)
+        {
+            try
+            {
+                return await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
             }
             catch (SqlException ex)
             {
@@ -92,11 +113,11 @@ namespace SqlBulkUpsert
         /// </summary>
         /// <param name="cancellationToken">The cancellation instruction.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        public Task<object> ExecuteScalarAsync(CancellationToken cancellationToken)
+        public async Task<object> ExecuteScalarAsync(CancellationToken cancellationToken)
         {
             try
             {
-                return command.ExecuteScalarAsync(cancellationToken);
+                return await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
             }
             catch (SqlException ex)
             {
