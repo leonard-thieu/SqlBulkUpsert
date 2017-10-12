@@ -84,6 +84,7 @@
     <Compile Include="ColumnComparer.cs" />
     <Compile Include="ColumnFactoryTests.cs" />
     <Compile Include="ColumnMappingsTests.cs" />
+    <Compile Include="ColumnsTests.cs" />
     <Compile Include="ColumnTests.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="DatabaseHelper.cs" />
@@ -91,7 +92,6 @@
     <Compile Include="DateTimeColumnTests.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="IDataRecordExtensionsTests.cs" />
-    <Compile Include="IEnumerableColumnBaseExtensionsTests.cs" />
     <Compile Include="NumericColumnTests.cs" />
     <Compile Include="SqlCommandAdapterTests.cs" />
     <Compile Include="SqlCommandExceptionTests.cs" />

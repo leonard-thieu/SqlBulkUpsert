@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace SqlBulkUpsert
@@ -19,20 +18,19 @@ namespace SqlBulkUpsert
             if (primaryKeyColumnNames == null)
                 throw new ArgumentNullException(nameof(primaryKeyColumnNames));
 
-            foreach (var column in columns)
-            {
-                Columns.Add(column);
-            }
+            Columns = new Columns(columns);
 
+            var primaryKeyColumns = new List<ColumnBase>();
             foreach (var columnName in primaryKeyColumnNames)
             {
                 var column = Columns.Single(c => c.Name == columnName);
-                PrimaryKeyColumns.Add(column);
+                primaryKeyColumns.Add(column);
             }
+            PrimaryKeyColumns = new Columns(primaryKeyColumns);
         }
 
         public string TableName { get; }
-        public Collection<ColumnBase> Columns { get; } = new Collection<ColumnBase>();
-        public Collection<ColumnBase> PrimaryKeyColumns { get; } = new Collection<ColumnBase>();
+        public Columns Columns { get; }
+        public Columns PrimaryKeyColumns { get; }
     }
 }

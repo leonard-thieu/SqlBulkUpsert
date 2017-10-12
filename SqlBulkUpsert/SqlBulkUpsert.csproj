@@ -48,11 +48,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ColumnBase.cs" />
+    <Compile Include="Columns.cs" />
     <Compile Include="ColumnFactory.cs" />
     <Compile Include="ColumnMappings.cs" />
     <Compile Include="DateTimeColumn.cs" />
     <Compile Include="IDataRecordExtensions.cs" />
-    <Compile Include="IEnumerableColumnBaseExtensions.cs" />
     <Compile Include="ITypedUpserter.cs" />
     <Compile Include="TypedUpserter.cs">
       <DependentUpon>ITypedUpserter.cs</DependentUpon>

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -139,8 +140,8 @@ namespace SqlBulkUpsert.Tests
 
                         // Assert
                         Assert.AreEqual(Constants.TableName, schema.TableName);
-                        CollectionAssert.AreEqual(expectedColumns, schema.Columns, new ColumnComparer());
-                        CollectionAssert.AreEqual(expectedKeyColumns, schema.PrimaryKeyColumns, new ColumnComparer());
+                        CollectionAssert.AreEqual(expectedColumns, schema.Columns.ToList(), new ColumnComparer());
+                        CollectionAssert.AreEqual(expectedKeyColumns, schema.PrimaryKeyColumns.ToList(), new ColumnComparer());
                     }
                 }
             }
@@ -246,8 +247,8 @@ WHERE kcu.TABLE_NAME = @tableName;", command.CommandText);
 
                 // Assert 
                 Assert.AreEqual(tableName, schema.TableName);
-                CollectionAssert.AreEqual(expectedColumns, schema.Columns, new ColumnComparer());
-                CollectionAssert.AreEqual(expectedKeyColumns, schema.PrimaryKeyColumns, new ColumnComparer());
+                CollectionAssert.AreEqual(expectedColumns, schema.Columns.ToList(), new ColumnComparer());
+                CollectionAssert.AreEqual(expectedKeyColumns, schema.PrimaryKeyColumns.ToList(), new ColumnComparer());
             }
         }
 
@@ -312,7 +313,7 @@ FROM [myTableName];", command.CommandText);
                 SqlConnection connection = null;
                 var viewName = "myViewName";
                 var tableName = "myTableName";
-                var columns = new List<ColumnBase>();
+                var columns = new Columns(new List<ColumnBase>());
 
                 // Act -> Assert
                 await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
@@ -328,7 +329,7 @@ FROM [myTableName];", command.CommandText);
                 var connection = new SqlConnection();
                 string viewName = null;
                 var tableName = "myTableName";
-                var columns = new List<ColumnBase>();
+                var columns = new Columns(new List<ColumnBase>());
 
                 // Act -> Assert
                 await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
@@ -344,7 +345,7 @@ FROM [myTableName];", command.CommandText);
                 var connection = new SqlConnection();
                 var viewName = "myViewName";
                 string tableName = null;
-                var columns = new List<ColumnBase>();
+                var columns = new Columns(new List<ColumnBase>());
 
                 // Act -> Assert
                 await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
@@ -364,7 +365,7 @@ FROM [myTableName];", command.CommandText);
                 var connection = new SqlConnection();
                 var viewName = "myViewName";
                 var tableName = "myTableName";
-                var columns = new List<ColumnBase>
+                var columns = new Columns(new List<ColumnBase>
                 {
                     new StringColumn("key_part_1", 1, false, "nchar", 4, 8),
                     new NumericColumn("key_part_2", 2, false, "smallint", 5, 10, 0),
@@ -374,7 +375,7 @@ FROM [myTableName];", command.CommandText);
                     new NumericColumn("nullable_money", 6, true, "money", 19, 10, 4),
                     new StringColumn("nullable_varbinary", 7, true, "varbinary", -1, -1),
                     new StringColumn("nullable_image", 8, true, "image", 2147483647, 2147483647),
-                };
+                });
 
                 // Act
                 var command = SqlConnectionExtensions.GetSwitchTableCommand(connection, viewName, tableName, columns);

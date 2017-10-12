@@ -160,7 +160,7 @@ FROM [{tableName}];";
             this SqlConnection connection,
             string viewName,
             string tableName,
-            ICollection<ColumnBase> columns,
+            Columns columns,
             CancellationToken cancellationToken = default)
         {
             if (viewName == null)
@@ -180,7 +180,7 @@ FROM [{tableName}];";
             SqlConnection connection,
             string viewName,
             string tableName,
-            ICollection<ColumnBase> columns)
+            Columns columns)
         {
             var command = SqlCommandAdapter.FromConnection(connection);
 

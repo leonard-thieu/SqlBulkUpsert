@@ -98,7 +98,7 @@ namespace SqlBulkUpsert.Tests
                 var schema = new SqlTableSchema(tableName, columns, primaryKeyColumnNames);
 
                 // Assert
-                CollectionAssert.AreEqual((ICollection)columns, schema.Columns);
+                CollectionAssert.AreEqual(columns.ToList(), schema.Columns.ToList());
             }
 
             [TestMethod]
