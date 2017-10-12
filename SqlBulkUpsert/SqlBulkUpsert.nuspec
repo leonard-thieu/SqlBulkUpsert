@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>toofz.SqlBulkUpsert</id>
-    <version>4.1.6</version>
+    <version>4.1.7</version>
     <title>SqlBulkUpsert</title>
     <authors>Derek Fowler, Leonard Thieu</authors>
     <owners>Leonard Thieu</owners>
