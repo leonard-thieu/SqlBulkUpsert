@@ -1,13 +1,12 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Xunit;
 
 namespace SqlBulkUpsert.Tests
 {
-    class ColumnBaseTests
+    public class ColumnBaseTests
     {
-        [TestClass]
         public class Constructor
         {
-            [TestMethod]
+            [Fact]
             public void SetsName()
             {
                 // Arrange
@@ -20,10 +19,10 @@ namespace SqlBulkUpsert.Tests
                 var column = new StubColumnBase(name, ordinalPosition, isNullable, dataType);
 
                 // Assert
-                Assert.AreEqual(name, column.Name);
+                Assert.Equal(name, column.Name);
             }
 
-            [TestMethod]
+            [Fact]
             public void SetsOrdinalPosition()
             {
                 // Arrange
@@ -36,10 +35,10 @@ namespace SqlBulkUpsert.Tests
                 var column = new StubColumnBase(name, ordinalPosition, isNullable, dataType);
 
                 // Assert
-                Assert.AreEqual(ordinalPosition, column.OrdinalPosition);
+                Assert.Equal(ordinalPosition, column.OrdinalPosition);
             }
 
-            [TestMethod]
+            [Fact]
             public void SetsIsNullable()
             {
                 // Arrange
@@ -52,10 +51,10 @@ namespace SqlBulkUpsert.Tests
                 var column = new StubColumnBase(name, ordinalPosition, isNullable, dataType);
 
                 // Assert
-                Assert.AreEqual(isNullable, column.IsNullable);
+                Assert.Equal(isNullable, column.IsNullable);
             }
 
-            [TestMethod]
+            [Fact]
             public void SetsDataType()
             {
                 // Arrange
@@ -68,14 +67,13 @@ namespace SqlBulkUpsert.Tests
                 var column = new StubColumnBase(name, ordinalPosition, isNullable, dataType);
 
                 // Assert
-                Assert.AreEqual(dataType, column.DataType);
+                Assert.Equal(dataType, column.DataType);
             }
         }
 
-        [TestClass]
         public class ToSelectListStringMethod
         {
-            [TestMethod]
+            [Fact]
             public void ReturnsQuotedName()
             {
                 // Arrange
@@ -89,14 +87,13 @@ namespace SqlBulkUpsert.Tests
                 var select = column.ToSelectListString();
 
                 // Assert
-                Assert.AreEqual("[myName]", select);
+                Assert.Equal("[myName]", select);
             }
         }
 
-        [TestClass]
         public class ToColumnDefinitionStringMethod
         {
-            [TestMethod]
+            [Fact]
             public void IsNullableIsTrue_ReturnsColumnDefinitionWithNull()
             {
                 // Arrange
@@ -110,10 +107,10 @@ namespace SqlBulkUpsert.Tests
                 var columnDefinition = column.ToColumnDefinitionString();
 
                 // Assert
-                Assert.AreEqual("[myName] myDataType NULL", columnDefinition);
+                Assert.Equal("[myName] myDataType NULL", columnDefinition);
             }
 
-            [TestMethod]
+            [Fact]
             public void IsNullableIsFalse_ReturnsColumnDefinitionWithNotNull()
             {
                 // Arrange
@@ -127,14 +124,13 @@ namespace SqlBulkUpsert.Tests
                 var columnDefinition = column.ToColumnDefinitionString();
 
                 // Assert
-                Assert.AreEqual("[myName] myDataType NOT NULL", columnDefinition);
+                Assert.Equal("[myName] myDataType NOT NULL", columnDefinition);
             }
         }
 
-        [TestClass]
         public class ToFullDataTypeStringMethod
         {
-            [TestMethod]
+            [Fact]
             public void ReturnsDataType()
             {
                 // Arrange
@@ -148,11 +144,11 @@ namespace SqlBulkUpsert.Tests
                 var fullDataType = column.PublicToFullDataTypeString();
 
                 // Assert
-                Assert.AreEqual("myDataType", fullDataType);
+                Assert.Equal("myDataType", fullDataType);
             }
         }
 
-        sealed class StubColumnBase : ColumnBase
+        private sealed class StubColumnBase : ColumnBase
         {
             public StubColumnBase(string name, int ordinalPosition, bool isNullable, string dataType) :
                 base(name, ordinalPosition, isNullable, dataType)

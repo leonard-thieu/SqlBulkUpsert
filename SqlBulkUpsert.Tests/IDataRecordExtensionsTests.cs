@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Data;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Xunit;
 
 namespace SqlBulkUpsert.Tests
 {
-    class IDataRecordExtensionsTests
+    public class IDataRecordExtensionsTests
     {
-        [TestClass]
         public class GetValueMethod
         {
-            [TestMethod]
+            [Fact]
             public void ReaderIsNull_ThrowsArgumentNullException()
             {
                 // Arrange
@@ -18,13 +17,13 @@ namespace SqlBulkUpsert.Tests
                 var columnName = "myColumnName";
 
                 // Act -> Assert
-                Assert.ThrowsException<ArgumentNullException>(() =>
+                Assert.Throws<ArgumentNullException>(() =>
                 {
                     IDataRecordExtensions.GetValue<int>(reader, columnName);
                 });
             }
 
-            [TestMethod]
+            [Fact]
             public void ColumnNameIsNull_ThrowsArgumentNullException()
             {
                 // Arrange
@@ -32,13 +31,13 @@ namespace SqlBulkUpsert.Tests
                 string columnName = null;
 
                 // Act -> Assert
-                Assert.ThrowsException<ArgumentNullException>(() =>
+                Assert.Throws<ArgumentNullException>(() =>
                 {
                     IDataRecordExtensions.GetValue<int>(reader, columnName);
                 });
             }
 
-            [TestMethod]
+            [Fact]
             public void FieldIsDBNull_ReturnsDefaultValue()
             {
                 // Arrange
@@ -51,10 +50,10 @@ namespace SqlBulkUpsert.Tests
                 var value = IDataRecordExtensions.GetValue<int?>(reader, columnName);
 
                 // Assert
-                Assert.IsNull(value);
+                Assert.Null(value);
             }
 
-            [TestMethod]
+            [Fact]
             public void FieldIsNotDBNull_ReturnsValue()
             {
                 // Arrange
@@ -68,7 +67,7 @@ namespace SqlBulkUpsert.Tests
                 var value = IDataRecordExtensions.GetValue<int?>(reader, columnName);
 
                 // Assert
-                Assert.AreEqual(20, value);
+                Assert.Equal(20, value);
             }
         }
     }

@@ -3,33 +3,33 @@ using System.Collections.Generic;
 
 namespace SqlBulkUpsert.Tests
 {
-    sealed class ColumnComparer : Comparer<ColumnBase>
+    internal sealed class ColumnComparer : EqualityComparer<ColumnBase>
     {
-        static bool Equals(NumericColumn x, NumericColumn y)
+        private static bool Equals(NumericColumn x, NumericColumn y)
         {
             return
                 x.Precision == y.Precision &&
                 x.Radix == y.Radix &&
                 x.Scale == y.Scale &&
-                Equals((ColumnBase)x, (ColumnBase)y);
+                EqualImpl((ColumnBase)x, (ColumnBase)y);
         }
 
-        static bool Equals(DateTimeColumn x, DateTimeColumn y)
+        private static bool Equals(DateTimeColumn x, DateTimeColumn y)
         {
             return
                 x.Precision == y.Precision &&
-                Equals((ColumnBase)x, (ColumnBase)y);
+                EqualImpl((ColumnBase)x, (ColumnBase)y);
         }
 
-        static bool Equals(StringColumn x, StringColumn y)
+        private static bool Equals(StringColumn x, StringColumn y)
         {
             return
                 x.CharLength == y.CharLength &&
                 x.ByteLength == y.ByteLength &&
-                Equals((ColumnBase)x, (ColumnBase)y);
+                EqualImpl((ColumnBase)x, (ColumnBase)y);
         }
 
-        static bool Equals(ColumnBase x, ColumnBase y)
+        private static bool EqualImpl(ColumnBase x, ColumnBase y)
         {
             return
                 x.Name == y.Name &&
@@ -38,26 +38,28 @@ namespace SqlBulkUpsert.Tests
                 x.DataType == y.DataType;
         }
 
-        static int ToInt(bool value) => value ? 0 : 1;
+        private static int ToInt(bool value) => value ? 0 : 1;
 
-        public override int Compare(ColumnBase x, ColumnBase y)
+        public override bool Equals(ColumnBase x, ColumnBase y)
         {
-            if (object.Equals(x, y)) { return 0; }
-            if (x == null || y == null) { return 1; }
+            if (object.Equals(x, y)) { return true; }
+            if (x == null || y == null) { return false; }
 
             var xNumeric = x as NumericColumn;
             var yNumeric = y as NumericColumn;
-            if (xNumeric != null && yNumeric != null) { return ToInt(Equals(xNumeric, yNumeric)); }
+            if (xNumeric != null && yNumeric != null) { return Equals(xNumeric, yNumeric); }
 
             var xDateTime = x as DateTimeColumn;
             var yDateTime = y as DateTimeColumn;
-            if (xDateTime != null && yDateTime != null) { return ToInt(Equals(xDateTime, yDateTime)); }
+            if (xDateTime != null && yDateTime != null) { return Equals(xDateTime, yDateTime); }
 
             var xString = x as StringColumn;
             var yString = y as StringColumn;
-            if (xString != null && yString != null) { return ToInt(Equals(xString, yString)); }
+            if (xString != null && yString != null) { return Equals(xString, yString); }
 
             throw new NotSupportedException("Column type is not supported.");
         }
+
+        public override int GetHashCode(ColumnBase obj) => 0;
     }
 }

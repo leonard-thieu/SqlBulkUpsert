@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Configuration;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -8,7 +7,7 @@ using SqlBulkUpsert.Tests.Properties;
 
 namespace SqlBulkUpsert.Tests
 {
-    static class DatabaseHelper
+    internal static class DatabaseHelper
     {
         public static Task CreateDatabaseAsync() => ExecuteCommandsAsync(Resources.CreateDatabase);
 
@@ -18,7 +17,7 @@ namespace SqlBulkUpsert.Tests
         /// Execute some SQL against the database
         /// </summary>
         /// <param name="sqlCommandText">SQL containing one or multiple command separated by \r\nGO\r\n</param>
-        static async Task ExecuteCommandsAsync(string sqlCommandText)
+        private static async Task ExecuteCommandsAsync(string sqlCommandText)
         {
             using (var connection = await CreateAndOpenConnectionAsync().ConfigureAwait(false))
             using (var command = connection.CreateCommand())
@@ -50,7 +49,7 @@ namespace SqlBulkUpsert.Tests
         public static string GetConnectionString()
         {
             return Environment.GetEnvironmentVariable("SqlBulkUpsertTestConnectionString", EnvironmentVariableTarget.Machine) ??
-                ConfigurationManager.ConnectionStrings["SqlBulkUpsertTestConnectionString"].ConnectionString;
+                "Data Source=localhost;Integrated Security=SSPI;";
         }
     }
 }

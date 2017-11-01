@@ -1,17 +1,15 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace SqlBulkUpsert.Tests
 {
-    class SqlTableSchemaTests
+    public class SqlTableSchemaTests
     {
-        [TestClass]
         public class Cosntructor
         {
-            [TestMethod]
+            [Fact]
             public void TableNameIsNull_ThrowsArgumentNullException()
             {
                 // Arrange
@@ -20,13 +18,13 @@ namespace SqlBulkUpsert.Tests
                 var primaryKeyColumnNames = new List<string>();
 
                 // Act -> Assert
-                Assert.ThrowsException<ArgumentNullException>(() =>
+                Assert.Throws<ArgumentNullException>(() =>
                 {
                     new SqlTableSchema(tableName, columns, primaryKeyColumnNames);
                 });
             }
 
-            [TestMethod]
+            [Fact]
             public void ColumnsIsNull_ThrowsArgumentNullException()
             {
                 // Arrange
@@ -35,13 +33,13 @@ namespace SqlBulkUpsert.Tests
                 var primaryKeyColumnNames = new List<string>();
 
                 // Act -> Assert
-                Assert.ThrowsException<ArgumentNullException>(() =>
+                Assert.Throws<ArgumentNullException>(() =>
                 {
                     new SqlTableSchema(tableName, columns, primaryKeyColumnNames);
                 });
             }
 
-            [TestMethod]
+            [Fact]
             public void PrimaryKeyColumnNamesIsNull_ThrowsArgumentNullException()
             {
                 // Arrange
@@ -50,13 +48,13 @@ namespace SqlBulkUpsert.Tests
                 IEnumerable<string> primaryKeyColumnNames = null;
 
                 // Act -> Assert
-                Assert.ThrowsException<ArgumentNullException>(() =>
+                Assert.Throws<ArgumentNullException>(() =>
                 {
                     new SqlTableSchema(tableName, columns, primaryKeyColumnNames);
                 });
             }
 
-            [TestMethod]
+            [Fact]
             public void ReturnsInstance()
             {
                 // Arrange
@@ -68,10 +66,10 @@ namespace SqlBulkUpsert.Tests
                 var schema = new SqlTableSchema(tableName, columns, primaryKeyColumnNames);
 
                 // Assert
-                Assert.IsInstanceOfType(schema, typeof(SqlTableSchema));
+                Assert.IsAssignableFrom<SqlTableSchema>(schema);
             }
 
-            [TestMethod]
+            [Fact]
             public void SetsTableName()
             {
                 // Arrange
@@ -83,10 +81,10 @@ namespace SqlBulkUpsert.Tests
                 var schema = new SqlTableSchema(tableName, columns, primaryKeyColumnNames);
 
                 // Assert
-                Assert.AreEqual(tableName, schema.TableName);
+                Assert.Equal(tableName, schema.TableName);
             }
 
-            [TestMethod]
+            [Fact]
             public void CopiesColumns()
             {
                 // Arrange
@@ -98,10 +96,10 @@ namespace SqlBulkUpsert.Tests
                 var schema = new SqlTableSchema(tableName, columns, primaryKeyColumnNames);
 
                 // Assert
-                CollectionAssert.AreEqual(columns.ToList(), schema.Columns.ToList());
+                Assert.Equal(columns.ToList(), schema.Columns.ToList());
             }
 
-            [TestMethod]
+            [Fact]
             public void AddsPrimaryKeyColumns()
             {
                 // Arrange

@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace SqlBulkUpsert.Tests
 {
-    [TestClass]
     public class ColumnTests
     {
-        readonly Dictionary<ColumnBase, string> columnDefn = new Dictionary<ColumnBase, string>
+        private readonly Dictionary<ColumnBase, string> columnDefn = new Dictionary<ColumnBase, string>
         {
             {
                 new StringColumn("key_part_1", 1, false, "nchar", 4, 8),
@@ -42,12 +41,12 @@ namespace SqlBulkUpsert.Tests
             },
         };
 
-        [TestMethod]
+        [Fact]
         public void CheckGeneratedColumnDefinitionString()
         {
             foreach (var kvp in columnDefn)
             {
-                Assert.AreEqual(kvp.Value, kvp.Key.ToColumnDefinitionString());
+                Assert.Equal(kvp.Value, kvp.Key.ToColumnDefinitionString());
             }
         }
     }

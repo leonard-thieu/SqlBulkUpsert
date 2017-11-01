@@ -8,7 +8,7 @@ namespace SqlBulkUpsert
     /// <summary>
     /// Wraps an instance of <see cref="SqlCommand"/> to provide more detailed error information.
     /// </summary>
-    sealed class SqlCommandAdapter : IDisposable
+    internal sealed class SqlCommandAdapter : IDisposable
     {
         /// <summary>
         /// Creates and returns an instance of <see cref="SqlCommandAdapter"/> that wraps a <see cref="SqlCommand"/> that is
@@ -27,12 +27,12 @@ namespace SqlBulkUpsert
             return new SqlCommandAdapter(connection.CreateCommand());
         }
 
-        SqlCommandAdapter(SqlCommand command)
+        private SqlCommandAdapter(SqlCommand command)
         {
             this.command = command;
         }
 
-        readonly SqlCommand command;
+        private readonly SqlCommand command;
 
         /// <summary>
         /// Gets or sets the Transact-SQL statement, table name or stored procedure to execute at the data source.
@@ -127,7 +127,7 @@ namespace SqlBulkUpsert
 
         #region IDisposable Members
 
-        bool disposed;
+        private bool disposed;
 
         /// <summary>
         /// Releases all resources used by the <see cref="SqlCommandAdapter"/>.

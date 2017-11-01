@@ -1,15 +1,13 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using toofz.TestsShared;
+using Xunit;
 
 namespace SqlBulkUpsert.Tests
 {
-    class SqlCommandExceptionTests
+    public class SqlCommandExceptionTests
     {
-        [TestClass]
         public class Constructor
         {
-            [TestMethod]
+            [Fact]
             public void ReturnsInstance()
             {
                 // Arrange
@@ -21,10 +19,10 @@ namespace SqlBulkUpsert.Tests
                 var ex = new SqlCommandException(message, inner, commandText);
 
                 // Assert
-                Assert.IsInstanceOfType(ex, typeof(SqlCommandException));
+                Assert.IsAssignableFrom<SqlCommandException>(ex);
             }
 
-            [TestMethod]
+            [Fact]
             public void SetsCommandText()
             {
                 // Arrange
@@ -36,14 +34,14 @@ namespace SqlBulkUpsert.Tests
                 var ex = new SqlCommandException(message, inner, commandText);
 
                 // Assert
-                Assert.AreEqual(commandText, ex.CommandText);
+                Assert.Equal(commandText, ex.CommandText);
             }
         }
 
-        [TestClass]
+
         public new class ToString
         {
-            [TestMethod]
+            [Fact]
             public void CommandTextIsNull_ReturnsSqlCommandExceptionAsString()
             {
                 // Arrange
@@ -55,10 +53,10 @@ namespace SqlBulkUpsert.Tests
                 var ex = new SqlCommandException(message, inner, commandText);
 
                 // Assert
-                Assert.AreEqual("SqlBulkUpsert.SqlCommandException: Exception of type 'SqlBulkUpsert.SqlCommandException' was thrown.", ex.ToString());
+                Assert.Equal("SqlBulkUpsert.SqlCommandException: Exception of type 'SqlBulkUpsert.SqlCommandException' was thrown.", ex.ToString());
             }
 
-            [TestMethod]
+            [Fact]
             public void ReturnsSqlCommandExceptionAsString()
             {
                 // Arrange
@@ -70,7 +68,7 @@ namespace SqlBulkUpsert.Tests
                 var ex = new SqlCommandException(message, inner, commandText);
 
                 // Assert
-                Assert.That.NormalizedAreEqual(@"SqlBulkUpsert.SqlCommandException: Exception of type 'SqlBulkUpsert.SqlCommandException' was thrown.
+                Assert.Equal(@"SqlBulkUpsert.SqlCommandException: Exception of type 'SqlBulkUpsert.SqlCommandException' was thrown.
 
 myCommandText", ex.ToString());
             }

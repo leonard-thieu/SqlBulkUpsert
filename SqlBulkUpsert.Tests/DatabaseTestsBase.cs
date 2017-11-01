@@ -1,19 +1,17 @@
 ﻿using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace SqlBulkUpsert.Tests
 {
-    [TestCategory("Uses SQL Server")]
-    public abstract class DatabaseTestsBase
+    [Trait("Category", "Uses SQL Server")]
+    public abstract class DatabaseTestsBase : IAsyncLifetime
     {
-        [TestInitialize]
-        public async Task TestInitialize()
+        public async Task InitializeAsync()
         {
             await DatabaseHelper.CreateDatabaseAsync().ConfigureAwait(false);
         }
 
-        [TestCleanup]
-        public async Task TestCleanup()
+        public async Task DisposeAsync()
         {
             await DatabaseHelper.DropDatabaseAsync().ConfigureAwait(false);
         }

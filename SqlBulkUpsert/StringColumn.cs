@@ -2,7 +2,7 @@
 
 namespace SqlBulkUpsert
 {
-    sealed class StringColumn : ColumnBase
+    internal sealed class StringColumn : ColumnBase
     {
         public StringColumn(string name, int ordinalPosition, bool isNullable, string dataType, int? charLength = null, int? byteLength = null) :
             base(name, ordinalPosition, isNullable, dataType)

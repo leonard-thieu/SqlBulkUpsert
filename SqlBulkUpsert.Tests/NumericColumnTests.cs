@@ -1,13 +1,12 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Xunit;
 
 namespace SqlBulkUpsert.Tests
 {
-    class NumericColumnTests
+    public class NumericColumnTests
     {
-        [TestClass]
         public class Constructor
         {
-            [TestMethod]
+            [Fact]
             public void SetsPrecision()
             {
                 // Arrange
@@ -23,10 +22,10 @@ namespace SqlBulkUpsert.Tests
                 var column = new NumericColumn(name, ordinalPosition, isNullable, dataType, precision, radix, scale);
 
                 // Assert
-                Assert.AreEqual(precision, column.Precision);
+                Assert.Equal(precision, column.Precision);
             }
 
-            [TestMethod]
+            [Fact]
             public void SetsRadix()
             {
                 // Arrange
@@ -42,10 +41,10 @@ namespace SqlBulkUpsert.Tests
                 var column = new NumericColumn(name, ordinalPosition, isNullable, dataType, precision, radix, scale);
 
                 // Assert
-                Assert.AreEqual(radix, column.Radix);
+                Assert.Equal(radix, column.Radix);
             }
 
-            [TestMethod]
+            [Fact]
             public void SetsScale()
             {
                 // Arrange
@@ -61,16 +60,15 @@ namespace SqlBulkUpsert.Tests
                 var column = new NumericColumn(name, ordinalPosition, isNullable, dataType, precision, radix, scale);
 
                 // Assert
-                Assert.AreEqual(scale, column.Scale);
+                Assert.Equal(scale, column.Scale);
             }
         }
 
-        [TestClass]
         public class ToFullDataTypeStringMethod
         {
-            [DataTestMethod]
-            [DataRow("numeric")]
-            [DataRow("decimal")]
+            [Theory]
+            [InlineData("numeric")]
+            [InlineData("decimal")]
             public void DataTypeHasPrecisionAndScale_ReturnsDataTypeWithPrecisionAndScale(string dataType)
             {
                 // Arrange
@@ -86,12 +84,12 @@ namespace SqlBulkUpsert.Tests
                 var columnDefinition = column.ToColumnDefinitionString();
 
                 // Assert
-                Assert.AreEqual($"[myName] {dataType}(5, 4) NULL", columnDefinition);
+                Assert.Equal($"[myName] {dataType}(5, 4) NULL", columnDefinition);
             }
 
-            [DataTestMethod]
-            [DataRow("float")]
-            [DataRow("real")]
+            [Theory]
+            [InlineData("float")]
+            [InlineData("real")]
             public void DataTypeHasRadix_ReturnsDataTypeWithRadix(string dataType)
             {
                 // Arrange
@@ -107,17 +105,17 @@ namespace SqlBulkUpsert.Tests
                 var columnDefinition = column.ToColumnDefinitionString();
 
                 // Assert
-                Assert.AreEqual($"[myName] {dataType}(2) NULL", columnDefinition);
+                Assert.Equal($"[myName] {dataType}(2) NULL", columnDefinition);
             }
 
-            [DataTestMethod]
-            [DataRow("bigint")]
-            [DataRow("bit")]
-            [DataRow("smallint")]
-            [DataRow("smallmoney")]
-            [DataRow("int")]
-            [DataRow("tinyint")]
-            [DataRow("money")]
+            [Theory]
+            [InlineData("bigint")]
+            [InlineData("bit")]
+            [InlineData("smallint")]
+            [InlineData("smallmoney")]
+            [InlineData("int")]
+            [InlineData("tinyint")]
+            [InlineData("money")]
             public void ReturnsDataType(string dataType)
             {
                 // Arrange
@@ -133,7 +131,7 @@ namespace SqlBulkUpsert.Tests
                 var columnDefinition = column.ToColumnDefinitionString();
 
                 // Assert
-                Assert.AreEqual($"[myName] {dataType} NULL", columnDefinition);
+                Assert.Equal($"[myName] {dataType} NULL", columnDefinition);
             }
         }
     }

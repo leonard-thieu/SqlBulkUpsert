@@ -1,6 +1,6 @@
 ﻿namespace SqlBulkUpsert
 {
-    sealed class NumericColumn : ColumnBase
+    internal sealed class NumericColumn : ColumnBase
     {
         public NumericColumn(string name, int ordinalPosition, bool isNullable, string dataType, int? precision = null, int? radix = null, int? scale = null) :
             base(name, ordinalPosition, isNullable, dataType)

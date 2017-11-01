@@ -1,40 +1,39 @@
 ﻿using System;
 using System.Data;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Xunit;
 
 namespace SqlBulkUpsert.Tests
 {
-    class ColumnFactoryTests
+    public class ColumnFactoryTests
     {
-        [TestClass]
         public class CreateFromReaderMethod
         {
-            [TestMethod]
+            [Fact]
             public void SqlDataReaderIsNull_ThrowsArgumentNullException()
             {
                 // Arrange
                 IDataReader sqlDataReader = null;
 
                 // Act -> Assert
-                Assert.ThrowsException<ArgumentNullException>(() =>
+                Assert.Throws<ArgumentNullException>(() =>
                 {
                     ColumnFactory.CreateFromReader(sqlDataReader);
                 });
             }
 
-            [DataTestMethod]
-            [DataRow("bigint")]
-            [DataRow("numeric")]
-            [DataRow("bit")]
-            [DataRow("smallint")]
-            [DataRow("decimal")]
-            [DataRow("smallmoney")]
-            [DataRow("int")]
-            [DataRow("tinyint")]
-            [DataRow("money")]
-            [DataRow("float")]
-            [DataRow("real")]
+            [Theory]
+            [InlineData("bigint")]
+            [InlineData("numeric")]
+            [InlineData("bit")]
+            [InlineData("smallint")]
+            [InlineData("decimal")]
+            [InlineData("smallmoney")]
+            [InlineData("int")]
+            [InlineData("tinyint")]
+            [InlineData("money")]
+            [InlineData("float")]
+            [InlineData("real")]
             public void DataTypeIsNumeric_ReturnsNumericColumn(string dataType)
             {
                 // Arrange
@@ -57,16 +56,16 @@ namespace SqlBulkUpsert.Tests
                 var column = ColumnFactory.CreateFromReader(sqlDataReader);
 
                 // Assert
-                Assert.IsInstanceOfType(column, typeof(NumericColumn));
+                Assert.IsAssignableFrom<NumericColumn>(column);
             }
 
-            [DataTestMethod]
-            [DataRow("date")]
-            [DataRow("datetimeoffset")]
-            [DataRow("datetime2")]
-            [DataRow("smalldatetime")]
-            [DataRow("datetime")]
-            [DataRow("time")]
+            [Theory]
+            [InlineData("date")]
+            [InlineData("datetimeoffset")]
+            [InlineData("datetime2")]
+            [InlineData("smalldatetime")]
+            [InlineData("datetime")]
+            [InlineData("time")]
             public void DataTypeIsDateTime_ReturnsDateTimeColumn(string dataType)
             {
                 // Arrange
@@ -89,19 +88,19 @@ namespace SqlBulkUpsert.Tests
                 var column = ColumnFactory.CreateFromReader(sqlDataReader);
 
                 // Assert
-                Assert.IsInstanceOfType(column, typeof(DateTimeColumn));
+                Assert.IsAssignableFrom<DateTimeColumn>(column);
             }
 
-            [DataTestMethod]
-            [DataRow("char")]
-            [DataRow("varchar")]
-            [DataRow("text")]
-            [DataRow("nchar")]
-            [DataRow("nvarchar")]
-            [DataRow("ntext")]
-            [DataRow("binary")]
-            [DataRow("varbinary")]
-            [DataRow("image")]
+            [Theory]
+            [InlineData("char")]
+            [InlineData("varchar")]
+            [InlineData("text")]
+            [InlineData("nchar")]
+            [InlineData("nvarchar")]
+            [InlineData("ntext")]
+            [InlineData("binary")]
+            [InlineData("varbinary")]
+            [InlineData("image")]
             public void DataTypeIsString_ReturnsStringColumn(string dataType)
             {
                 // Arrange
@@ -124,10 +123,10 @@ namespace SqlBulkUpsert.Tests
                 var column = ColumnFactory.CreateFromReader(sqlDataReader);
 
                 // Assert
-                Assert.IsInstanceOfType(column, typeof(StringColumn));
+                Assert.IsAssignableFrom<StringColumn>(column);
             }
 
-            [TestMethod]
+            [Fact]
             public void DataTypeIsNotSupported_ThrowsNotSupportedException()
             {
                 // Arrange
@@ -148,7 +147,7 @@ namespace SqlBulkUpsert.Tests
                 IDataReader sqlDataReader = mockSqlDataReader.Object;
 
                 // Act -> Assert
-                Assert.ThrowsException<NotSupportedException>(() =>
+                Assert.Throws<NotSupportedException>(() =>
                 {
                     ColumnFactory.CreateFromReader(sqlDataReader);
                 });

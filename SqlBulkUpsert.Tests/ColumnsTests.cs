@@ -1,29 +1,28 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace SqlBulkUpsert.Tests
 {
-    class ColumnsTests
+    public class ColumnsTests
     {
-        [TestClass]
         public class Constructor
         {
-            [TestMethod]
+            [Fact]
             public void ColumnsIsNull_ThrowsArgumentNullException()
             {
                 // Arrange
                 IEnumerable<ColumnBase> cols = null;
 
                 // Act -> Assert
-                Assert.ThrowsException<ArgumentNullException>(() =>
+                Assert.Throws<ArgumentNullException>(() =>
                 {
                     new Columns(cols);
                 });
             }
 
-            [TestMethod]
+            [Fact]
             public void ReturnsInstance()
             {
                 // Arrange
@@ -33,14 +32,13 @@ namespace SqlBulkUpsert.Tests
                 var columns = new Columns(cols);
 
                 // Assert
-                Assert.IsInstanceOfType(columns, typeof(Columns));
+                Assert.IsAssignableFrom<Columns>(columns);
             }
         }
 
-        [TestClass]
         public class ToSelectListStringMethod
         {
-            [TestMethod]
+            [Fact]
             public void ReturnsSelectListString()
             {
                 // Arrange
@@ -54,15 +52,14 @@ namespace SqlBulkUpsert.Tests
                 var select = columns.ToSelectListString();
 
                 // Assert
-                Assert.AreEqual("[key_part_1], [key_part_2]", select);
+                Assert.Equal("[key_part_1], [key_part_2]", select);
             }
         }
 
-        [TestClass]
         public class ToColumnDefinitionListStringMethod
         {
 
-            [TestMethod]
+            [Fact]
             public void ReturnsColumnsDefinitionList()
             {
                 // Arrange
@@ -76,14 +73,13 @@ namespace SqlBulkUpsert.Tests
                 var columnDefinition = columns.ToColumnDefinitionListString();
 
                 // Assert
-                Assert.AreEqual("[key_part_1] nchar(4) NOT NULL, [key_part_2] smallint NOT NULL", columnDefinition);
+                Assert.Equal("[key_part_1] nchar(4) NOT NULL, [key_part_2] smallint NOT NULL", columnDefinition);
             }
         }
 
-        [TestClass]
         public class GetEnumeratorMethod
         {
-            [TestMethod]
+            [Fact]
             public void ReturnsEnumerator()
             {
                 // Arrange
@@ -94,14 +90,13 @@ namespace SqlBulkUpsert.Tests
                 var enumerator = columns.GetEnumerator();
 
                 // Assert
-                Assert.IsInstanceOfType(enumerator, typeof(IEnumerator<ColumnBase>));
+                Assert.IsAssignableFrom<IEnumerator<ColumnBase>>(enumerator);
             }
         }
 
-        [TestClass]
         public class IEnumerable_GetEnumeratorMethod
         {
-            [TestMethod]
+            [Fact]
             public void ReturnsEnumerator()
             {
                 // Arrange
@@ -113,7 +108,7 @@ namespace SqlBulkUpsert.Tests
                 var enumerator = enumerable.GetEnumerator();
 
                 // Assert
-                Assert.IsInstanceOfType(enumerator, typeof(IEnumerator));
+                Assert.IsAssignableFrom<IEnumerator>(enumerator);
             }
         }
     }

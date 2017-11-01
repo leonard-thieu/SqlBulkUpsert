@@ -1,6 +1,6 @@
 ﻿namespace SqlBulkUpsert
 {
-    abstract class ColumnBase
+    internal abstract class ColumnBase
     {
         protected ColumnBase(string name, int ordinalPosition, bool isNullable, string dataType)
         {

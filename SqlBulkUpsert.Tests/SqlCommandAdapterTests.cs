@@ -1,28 +1,27 @@
 ﻿using System;
 using System.Data.SqlClient;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace SqlBulkUpsert.Tests
 {
-    class SqlCommandAdapterTests
+    public class SqlCommandAdapterTests
     {
-        [TestClass]
         public class FromConnectionMethod
         {
-            [TestMethod]
+            [Fact]
             public void ConnectionIsNull_ThrowsArgumentNullException()
             {
                 // Arrange
                 SqlConnection connection = null;
 
                 // Act -> Assert
-                Assert.ThrowsException<ArgumentNullException>(() =>
+                Assert.Throws<ArgumentNullException>(() =>
                 {
                     SqlCommandAdapter.FromConnection(connection);
                 });
             }
 
-            [TestMethod]
+            [Fact]
             public void ReturnsInstance()
             {
                 // Arrange
@@ -32,14 +31,13 @@ namespace SqlBulkUpsert.Tests
                 var adapter = SqlCommandAdapter.FromConnection(connection);
 
                 // Assert
-                Assert.IsInstanceOfType(adapter, typeof(SqlCommandAdapter));
+                Assert.IsAssignableFrom<SqlCommandAdapter>(adapter);
             }
         }
 
-        [TestClass]
         public class CommandTextProperty
         {
-            [TestMethod]
+            [Fact]
             public void GetSetBehavior()
             {
                 // Arrange
@@ -48,14 +46,13 @@ namespace SqlBulkUpsert.Tests
 
                 // Act -> Assert
                 adapter.CommandText = "myCommandText";
-                Assert.AreEqual("myCommandText", adapter.CommandText);
+                Assert.Equal("myCommandText", adapter.CommandText);
             }
         }
 
-        [TestClass]
         public class ParametersProperty
         {
-            [TestMethod]
+            [Fact]
             public void ReturnsInstance()
             {
                 // Arrange
@@ -66,7 +63,7 @@ namespace SqlBulkUpsert.Tests
                 var parameters = adapter.Parameters;
 
                 // Assert
-                Assert.IsInstanceOfType(parameters, typeof(SqlParameterCollection));
+                Assert.IsAssignableFrom<SqlParameterCollection>(parameters);
             }
         }
     }

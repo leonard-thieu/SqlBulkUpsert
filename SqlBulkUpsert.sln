@@ -1,19 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2002
+VisualStudioVersion = 15.0.27004.2006
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlBulkUpsert", "SqlBulkUpsert\SqlBulkUpsert.csproj", "{56C1CEDD-D894-48C8-90F3-6262C2DCC833}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlBulkUpsert.Tests", "SqlBulkUpsert.Tests\SqlBulkUpsert.Tests.csproj", "{E71E9D22-5E1F-4322-9660-BC950AEED0C7}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{25494718-E37E-42AD-9E3A-FE10AFA06567}"
 	ProjectSection(SolutionItems) = preProject
 		appveyor.yml = appveyor.yml
 		NuGet.Config = NuGet.Config
 		README.md = README.md
-		SqlBulkUpsert\SqlBulkUpsert.nuspec = SqlBulkUpsert\SqlBulkUpsert.nuspec
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlBulkUpsert", "SqlBulkUpsert\SqlBulkUpsert.csproj", "{ED50DDF7-AFF0-45E5-A7AF-CD1EBAEBCE5F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlBulkUpsert.Tests", "SqlBulkUpsert.Tests\SqlBulkUpsert.Tests.csproj", "{0062581D-FCAE-4F52-AE16-6C1EB52BA071}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,14 +20,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{56C1CEDD-D894-48C8-90F3-6262C2DCC833}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{56C1CEDD-D894-48C8-90F3-6262C2DCC833}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{56C1CEDD-D894-48C8-90F3-6262C2DCC833}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{56C1CEDD-D894-48C8-90F3-6262C2DCC833}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E71E9D22-5E1F-4322-9660-BC950AEED0C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E71E9D22-5E1F-4322-9660-BC950AEED0C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E71E9D22-5E1F-4322-9660-BC950AEED0C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E71E9D22-5E1F-4322-9660-BC950AEED0C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED50DDF7-AFF0-45E5-A7AF-CD1EBAEBCE5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED50DDF7-AFF0-45E5-A7AF-CD1EBAEBCE5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED50DDF7-AFF0-45E5-A7AF-CD1EBAEBCE5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED50DDF7-AFF0-45E5-A7AF-CD1EBAEBCE5F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0062581D-FCAE-4F52-AE16-6C1EB52BA071}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0062581D-FCAE-4F52-AE16-6C1EB52BA071}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0062581D-FCAE-4F52-AE16-6C1EB52BA071}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0062581D-FCAE-4F52-AE16-6C1EB52BA071}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

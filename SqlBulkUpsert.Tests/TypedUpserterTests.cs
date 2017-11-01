@@ -2,29 +2,28 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace SqlBulkUpsert.Tests
 {
-    class TypedUpserterTests
+    public class TypedUpserterTests
     {
-        [TestClass]
         public class Constructor
         {
-            [TestMethod]
+            [Fact]
             public void ColumnMappingsIsNull_ThrowsArgumentNullException()
             {
                 // Arrange
                 ColumnMappings<object> columnMappings = null;
 
                 // Act -> Assert
-                Assert.ThrowsException<ArgumentNullException>(() =>
+                Assert.Throws<ArgumentNullException>(() =>
                 {
                     new TypedUpserter<object>(columnMappings);
                 });
             }
 
-            [TestMethod]
+            [Fact]
             public void ReturnsInstance()
             {
                 // Arrange
@@ -34,14 +33,13 @@ namespace SqlBulkUpsert.Tests
                 var upserter = new TypedUpserter<object>(columnMappings);
 
                 // Assert
-                Assert.IsInstanceOfType(upserter, typeof(TypedUpserter<object>));
+                Assert.IsAssignableFrom<TypedUpserter<object>>(upserter);
             }
         }
 
-        [TestClass]
         public class InsertAsyncMethod
         {
-            [TestMethod]
+            [Fact]
             public async Task ConnectionIsNull_ThrowsArgumentNullException()
             {
                 // Arrange
@@ -51,13 +49,13 @@ namespace SqlBulkUpsert.Tests
                 var items = new List<object>();
 
                 // Act -> Assert
-                await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
+                await Assert.ThrowsAsync<ArgumentNullException>(() =>
                 {
                     return upserter.InsertAsync(connection, items);
                 });
             }
 
-            [TestMethod]
+            [Fact]
             public async Task ItemsIsNull_ThrowsArgumentNullException()
             {
                 // Arrange
@@ -67,17 +65,16 @@ namespace SqlBulkUpsert.Tests
                 IEnumerable<object> items = null;
 
                 // Act -> Assert
-                await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
+                await Assert.ThrowsAsync<ArgumentNullException>(() =>
                 {
                     return upserter.InsertAsync(connection, items);
                 });
             }
         }
 
-        [TestClass]
         public class UpsertAsyncMethod
         {
-            [TestMethod]
+            [Fact]
             public async Task ConnectionIsNull_ThrowsArgumentNullException()
             {
                 // Arrange
@@ -88,13 +85,13 @@ namespace SqlBulkUpsert.Tests
                 var updateWhenMatched = false;
 
                 // Act -> Assert
-                await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
+                await Assert.ThrowsAsync<ArgumentNullException>(() =>
                 {
                     return upserter.UpsertAsync(connection, items, updateWhenMatched);
                 });
             }
 
-            [TestMethod]
+            [Fact]
             public async Task ItemsIsNull_ThrowsArgumentNullException()
             {
                 // Arrange
@@ -105,17 +102,16 @@ namespace SqlBulkUpsert.Tests
                 var updateWhenMatched = false;
 
                 // Act -> Assert
-                await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
+                await Assert.ThrowsAsync<ArgumentNullException>(() =>
                 {
                     return upserter.UpsertAsync(connection, items, updateWhenMatched);
                 });
             }
         }
 
-        [TestClass]
         public class IntegrationTests : DatabaseTestsBase
         {
-            [TestMethod]
+            [Fact]
             public async Task EndToEnd()
             {
                 // Arrange
@@ -193,16 +189,16 @@ namespace SqlBulkUpsert.Tests
                         var item1 = items[i];
                         var item2 = items2[i];
 
-                        Assert.AreEqual(item1.KeyPart1, item2.KeyPart1);
-                        Assert.AreEqual(item1.KeyPart2, item2.KeyPart2);
-                        Assert.AreEqual(item1.Text, item2.Text);
-                        Assert.AreEqual(item1.Number, item2.Number);
-                        Assert.AreEqual(item1.Date, item2.Date);
+                        Assert.Equal(item1.KeyPart1, item2.KeyPart1);
+                        Assert.Equal(item1.KeyPart2, item2.KeyPart2);
+                        Assert.Equal(item1.Text, item2.Text);
+                        Assert.Equal(item1.Number, item2.Number);
+                        Assert.Equal(item1.Date, item2.Date);
                     }
                 }
             }
 
-            class TestDto
+            private class TestDto
             {
                 public string KeyPart1 { get; set; }
                 public short KeyPart2 { get; set; }

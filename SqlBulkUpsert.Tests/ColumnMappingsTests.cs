@@ -1,43 +1,41 @@
 ﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace SqlBulkUpsert.Tests
 {
-    class ColumnMappingsTests
+    public class ColumnMappingsTests
     {
-        [TestClass]
         public class Constructor
         {
-            [TestMethod]
+            [Fact]
             public void TableNameIsNull_ThrowsArgumentNullException()
             {
                 // Arrange
                 string tableName = null;
 
                 // Act -> Assert
-                Assert.ThrowsException<ArgumentNullException>(() =>
+                Assert.Throws<ArgumentNullException>(() =>
                 {
                     new ColumnMappings<object>(tableName);
                 });
             }
 
-            [TestMethod]
+            [Fact]
             public void ReturnsInstance()
             {
                 // Arrange -> Act
                 var mapping = new ColumnMappings<object>("myTableName");
 
                 // Assert
-                Assert.IsInstanceOfType(mapping, typeof(ColumnMappings<object>));
+                Assert.IsAssignableFrom<ColumnMappings<object>>(mapping);
             }
         }
 
-        [TestClass]
         public class TableNameProperty
         {
-            [TestMethod]
+            [Fact]
             public void ReturnsTableName()
             {
                 // Arrange
@@ -47,14 +45,13 @@ namespace SqlBulkUpsert.Tests
                 var tableName = mappings.TableName;
 
                 // Assert
-                Assert.AreEqual("myTableName", tableName);
+                Assert.Equal("myTableName", tableName);
             }
         }
 
-        [TestClass]
         public class ColumnsProperty
         {
-            [TestMethod]
+            [Fact]
             public void ReturnsColumns()
             {
                 // Arrange
@@ -71,14 +68,13 @@ namespace SqlBulkUpsert.Tests
                 var columns = columnMappings.Columns;
 
                 // Assert
-                CollectionAssert.AllItemsAreInstancesOfType(columns.ToList(), typeof(string));
+                Assert.All(columns.ToList(), c => Assert.IsAssignableFrom<string>(c));
             }
         }
 
-        [TestClass]
         public class Add
         {
-            [TestMethod]
+            [Fact]
             public void MappingIsNull_ThrowsArgumentNullException()
             {
                 // Arrange
@@ -86,13 +82,13 @@ namespace SqlBulkUpsert.Tests
                 Expression<Func<object, object>> map = null;
 
                 // Act -> Assert
-                Assert.ThrowsException<ArgumentNullException>(() =>
+                Assert.Throws<ArgumentNullException>(() =>
                 {
                     mapping.Add(map);
                 });
             }
 
-            [TestMethod]
+            [Fact]
             public void MappingReferencesValueType_AddsMapping()
             {
                 // Arrange
@@ -103,12 +99,12 @@ namespace SqlBulkUpsert.Tests
 
                 // Assert
                 var mapping = mappings[0];
-                Assert.AreEqual(nameof(TestDto.KeyPart2), mapping.Key);
+                Assert.Equal(nameof(TestDto.KeyPart2), mapping.Key);
                 var testDto = new TestDto { KeyPart2 = 16 };
-                Assert.AreEqual((short)16, mapping.Value(testDto));
+                Assert.Equal((short)16, mapping.Value(testDto));
             }
 
-            [TestMethod]
+            [Fact]
             public void MappingReferencesReferenceType_AddsMapping()
             {
                 // Arrange
@@ -119,13 +115,13 @@ namespace SqlBulkUpsert.Tests
 
                 // Assert
                 var mapping = mappings[0];
-                Assert.AreEqual(nameof(TestDto.KeyPart1), mapping.Key);
+                Assert.Equal(nameof(TestDto.KeyPart1), mapping.Key);
                 var testDto = new TestDto { KeyPart1 = "myKey" };
-                Assert.AreEqual("myKey", mapping.Value(testDto));
+                Assert.Equal("myKey", mapping.Value(testDto));
             }
         }
 
-        class TestDto
+        private class TestDto
         {
             public string KeyPart1 { get; set; }
             public short KeyPart2 { get; set; }

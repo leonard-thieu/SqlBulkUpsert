@@ -15,7 +15,7 @@ namespace SqlBulkUpsert
             this.columnMappings = columnMappings ?? throw new ArgumentNullException(nameof(columnMappings));
         }
 
-        readonly ColumnMappings<T> columnMappings;
+        private readonly ColumnMappings<T> columnMappings;
 
         public async Task<int> InsertAsync(
             SqlConnection connection,
@@ -80,7 +80,7 @@ namespace SqlBulkUpsert
             return await connection.MergeAsync(tempTableName, targetTableSchema, updateWhenMatched, cancellationToken).ConfigureAwait(false);
         }
 
-        async Task BulkCopyAsync(
+        private async Task BulkCopyAsync(
             SqlConnection connection,
             string tableName,
             IDataReader data,

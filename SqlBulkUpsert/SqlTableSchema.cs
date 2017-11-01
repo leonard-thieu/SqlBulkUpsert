@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace SqlBulkUpsert
 {
-    sealed class SqlTableSchema
+    internal sealed class SqlTableSchema
     {
         public SqlTableSchema(
             string tableName,
