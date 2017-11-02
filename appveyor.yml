@@ -1,16 +1,16 @@
 version: 4.1.7.{build}
 image: Visual Studio 2017
 
+branches:
+  only:
+    - master
 configuration:
   - Release
 environment:
-  APPVEYOR_CACHE_ENTRY_ZIP_ARGS: -t7z -m0=lzma -mx=9
   PROJECT: SqlBulkUpsert
   MYGET_API_KEY:
     secure: XZmbJDCK5oiqhbLt1y7UXM6aCYPpF2tm/bJMUJzBsCe1fd2TuwXyaz99RN+bDpHw
   SqlBulkUpsertTestConnectionString: Server=(local)\SQL2014;User ID=sa;Password=Password12!
-cache:
-  - packages -> **\packages.config
 notifications:
   - provider: Slack
     incoming_webhook:
@@ -23,6 +23,7 @@ services:
   - mssql2014
 
 install:
+  - nuget update -Self
   - git clone https://github.com/leonard-thieu/toofz-build.git Scripts
   
 before_build:
