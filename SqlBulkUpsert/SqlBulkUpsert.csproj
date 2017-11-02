@@ -20,7 +20,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Data.SqlClient" Version="4.4.0" />
+    <Reference Include="System.Data.SqlClient">
+      <HintPath>..\System.Data.SqlClient\netstandard\System.Data.SqlClient.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Diagnostics.DiagnosticSource">
+      <HintPath>..\System.Diagnostics.DiagnosticSource\4.0.3.0\netstandard\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
