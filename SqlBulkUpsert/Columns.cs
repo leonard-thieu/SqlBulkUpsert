@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace SqlBulkUpsert
 {
-    sealed class Columns : IEnumerable<ColumnBase>
+    internal sealed class Columns : IEnumerable<ColumnBase>
     {
         public Columns(IEnumerable<ColumnBase> columns)
         {
@@ -15,7 +15,7 @@ namespace SqlBulkUpsert
             this.columns = columns.ToList();
         }
 
-        readonly List<ColumnBase> columns;
+        private readonly List<ColumnBase> columns;
 
         public string ToSelectListString() => string.Join(", ", columns.Select(c => c.ToSelectListString()));
 

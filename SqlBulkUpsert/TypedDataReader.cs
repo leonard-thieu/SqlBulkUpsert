@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace SqlBulkUpsert
 {
-    sealed class TypedDataReader<T> : IDataReader
+    internal sealed class TypedDataReader<T> : IDataReader
     {
         public TypedDataReader(ColumnMappings<T> columnMappings, IEnumerable<T> items)
         {
@@ -17,8 +16,8 @@ namespace SqlBulkUpsert
             this.items = items.GetEnumerator();
         }
 
-        readonly ColumnMappings<T> columnMappings;
-        readonly IEnumerator<T> items;
+        private readonly ColumnMappings<T> columnMappings;
+        private readonly IEnumerator<T> items;
 
         public object GetValue(int i)
         {
@@ -39,92 +38,35 @@ namespace SqlBulkUpsert
 
         #region Not used by SqlBulkCopy (satisfying interface only)
 
-        [ExcludeFromCodeCoverage]
-        public string GetName(int i) => throw new NotImplementedException();
-
-        [ExcludeFromCodeCoverage]
-        public string GetDataTypeName(int i) => throw new NotImplementedException();
-
-        [ExcludeFromCodeCoverage]
-        public Type GetFieldType(int i) => throw new NotImplementedException();
-
-        [ExcludeFromCodeCoverage]
-        public int GetValues(object[] values) => throw new NotImplementedException();
-
-        [ExcludeFromCodeCoverage]
-        public bool GetBoolean(int i) => throw new NotImplementedException();
-
-        [ExcludeFromCodeCoverage]
-        public byte GetByte(int i) => throw new NotImplementedException();
-
-        [ExcludeFromCodeCoverage]
-        public long GetBytes(int i, long fieldOffset, byte[] buffer, int bufferoffset, int length) => throw new NotImplementedException();
-
-        [ExcludeFromCodeCoverage]
-        public char GetChar(int i) => throw new NotImplementedException();
-
-        [ExcludeFromCodeCoverage]
-        public long GetChars(int i, long fieldoffset, char[] buffer, int bufferoffset, int length) => throw new NotImplementedException();
-
-        [ExcludeFromCodeCoverage]
-        public Guid GetGuid(int i) => throw new NotImplementedException();
-
-        [ExcludeFromCodeCoverage]
-        public short GetInt16(int i) => throw new NotImplementedException();
-
-        [ExcludeFromCodeCoverage]
-        public int GetInt32(int i) => throw new NotImplementedException();
-
-        [ExcludeFromCodeCoverage]
-        public long GetInt64(int i) => throw new NotImplementedException();
-
-        [ExcludeFromCodeCoverage]
-        public float GetFloat(int i) => throw new NotImplementedException();
-
-        [ExcludeFromCodeCoverage]
-        public double GetDouble(int i) => throw new NotImplementedException();
-
-        [ExcludeFromCodeCoverage]
-        public string GetString(int i) => throw new NotImplementedException();
-
-        [ExcludeFromCodeCoverage]
-        public decimal GetDecimal(int i) => throw new NotImplementedException();
-
-        [ExcludeFromCodeCoverage]
-        public DateTime GetDateTime(int i) => throw new NotImplementedException();
-
-        [ExcludeFromCodeCoverage]
-        public IDataReader GetData(int i) => throw new NotImplementedException();
-
-        [ExcludeFromCodeCoverage]
-        public bool IsDBNull(int i) => throw new NotImplementedException();
-
-        [ExcludeFromCodeCoverage]
+        string IDataRecord.GetName(int i) => throw new NotImplementedException();
+        string IDataRecord.GetDataTypeName(int i) => throw new NotImplementedException();
+        Type IDataRecord.GetFieldType(int i) => throw new NotImplementedException();
+        int IDataRecord.GetValues(object[] values) => throw new NotImplementedException();
+        bool IDataRecord.GetBoolean(int i) => throw new NotImplementedException();
+        byte IDataRecord.GetByte(int i) => throw new NotImplementedException();
+        long IDataRecord.GetBytes(int i, long fieldOffset, byte[] buffer, int bufferoffset, int length) => throw new NotImplementedException();
+        char IDataRecord.GetChar(int i) => throw new NotImplementedException();
+        long IDataRecord.GetChars(int i, long fieldoffset, char[] buffer, int bufferoffset, int length) => throw new NotImplementedException();
+        Guid IDataRecord.GetGuid(int i) => throw new NotImplementedException();
+        short IDataRecord.GetInt16(int i) => throw new NotImplementedException();
+        int IDataRecord.GetInt32(int i) => throw new NotImplementedException();
+        long IDataRecord.GetInt64(int i) => throw new NotImplementedException();
+        float IDataRecord.GetFloat(int i) => throw new NotImplementedException();
+        double IDataRecord.GetDouble(int i) => throw new NotImplementedException();
+        string IDataRecord.GetString(int i) => throw new NotImplementedException();
+        decimal IDataRecord.GetDecimal(int i) => throw new NotImplementedException();
+        DateTime IDataRecord.GetDateTime(int i) => throw new NotImplementedException();
+        IDataReader IDataRecord.GetData(int i) => throw new NotImplementedException();
+        bool IDataRecord.IsDBNull(int i) => throw new NotImplementedException();
         object IDataRecord.this[int i] => throw new NotImplementedException();
-
-        [ExcludeFromCodeCoverage]
         object IDataRecord.this[string name] => throw new NotImplementedException();
-
-        [ExcludeFromCodeCoverage]
-        public void Close() => throw new NotImplementedException();
-
-        [ExcludeFromCodeCoverage]
-        public DataTable GetSchemaTable() => throw new NotImplementedException();
-
-        [ExcludeFromCodeCoverage]
-        public bool NextResult() => throw new NotImplementedException();
-
-        [ExcludeFromCodeCoverage]
-        public int Depth => throw new NotImplementedException();
-
-        [ExcludeFromCodeCoverage]
-        public bool IsClosed => throw new NotImplementedException();
-
-        [ExcludeFromCodeCoverage]
-        public int RecordsAffected => throw new NotImplementedException();
-
-        [ExcludeFromCodeCoverage]
-        public void Dispose() { }
+        void IDataReader.Close() => throw new NotImplementedException();
+        DataTable IDataReader.GetSchemaTable() => throw new NotImplementedException();
+        bool IDataReader.NextResult() => throw new NotImplementedException();
+        int IDataReader.Depth => throw new NotImplementedException();
+        bool IDataReader.IsClosed => throw new NotImplementedException();
+        int IDataReader.RecordsAffected => throw new NotImplementedException();
+        void IDisposable.Dispose() { }
 
         #endregion
     }

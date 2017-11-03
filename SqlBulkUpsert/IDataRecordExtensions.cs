@@ -6,7 +6,7 @@ namespace SqlBulkUpsert
     /// <summary>
     /// Contains extension methods for <see cref="IDataRecord"/>.
     /// </summary>
-    static class IDataRecordExtensions
+    internal static class IDataRecordExtensions
     {
         public static T GetValue<T>(this IDataRecord reader, string columnName)
         {

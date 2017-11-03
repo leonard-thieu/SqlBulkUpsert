@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace SqlBulkUpsert
 {
-    static class SqlConnectionExtensions
+    internal static class SqlConnectionExtensions
     {
         #region Use
 
@@ -356,7 +356,7 @@ FROM [{tableName}];";
             return AlterNonclusteredIndexesAsync(connection, tableName, "REBUILD", cancellationToken);
         }
 
-        static async Task AlterNonclusteredIndexesAsync(
+        private static async Task AlterNonclusteredIndexesAsync(
             this SqlConnection connection,
             string tableName,
             string action,

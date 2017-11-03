@@ -1,6 +1,6 @@
 ﻿namespace SqlBulkUpsert
 {
-    sealed class DateTimeColumn : ColumnBase
+    internal sealed class DateTimeColumn : ColumnBase
     {
         public DateTimeColumn(string name, int ordinalPosition, bool isNullable, string dataType, int? precision) :
             base(name, ordinalPosition, isNullable, dataType)

@@ -3,7 +3,7 @@ using System.Data;
 
 namespace SqlBulkUpsert
 {
-    static class ColumnFactory
+    internal static class ColumnFactory
     {
         public static ColumnBase CreateFromReader(IDataReader sqlDataReader)
         {
