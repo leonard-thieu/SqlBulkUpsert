@@ -1,13 +1,12 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Xunit;
 
 namespace SqlBulkUpsert.Tests
 {
-    class StringColumnTests
+    public class StringColumnTests
     {
-        [TestClass]
         public class Constructor
         {
-            [TestMethod]
+            [Fact]
             public void SetsCharLength()
             {
                 // Arrange
@@ -22,10 +21,10 @@ namespace SqlBulkUpsert.Tests
                 var column = new StringColumn(name, ordinalPosition, isNullable, dataType, charLength, byteLength);
 
                 // Assert
-                Assert.AreEqual(charLength, column.CharLength);
+                Assert.Equal(charLength, column.CharLength);
             }
 
-            [TestMethod]
+            [Fact]
             public void SetsByteLength()
             {
                 // Arrange
@@ -40,18 +39,17 @@ namespace SqlBulkUpsert.Tests
                 var column = new StringColumn(name, ordinalPosition, isNullable, dataType, charLength, byteLength);
 
                 // Assert
-                Assert.AreEqual(byteLength, column.ByteLength);
+                Assert.Equal(byteLength, column.ByteLength);
             }
         }
 
-        [TestClass]
         public class ToFullDataTypeStringMethod
         {
-            [DataTestMethod]
-            [DataRow("char")]
-            [DataRow("varchar")]
-            [DataRow("nchar")]
-            [DataRow("nvarchar")]
+            [Theory]
+            [InlineData("char")]
+            [InlineData("varchar")]
+            [InlineData("nchar")]
+            [InlineData("nvarchar")]
             public void DataTypeHasCharLength_ReturnsDataTypeWithCharLength(string dataType)
             {
                 // Arrange
@@ -66,10 +64,10 @@ namespace SqlBulkUpsert.Tests
                 var columnDefinition = column.ToColumnDefinitionString();
 
                 // Assert
-                Assert.AreEqual($"[myName] {dataType}(5) NULL", columnDefinition);
+                Assert.Equal($"[myName] {dataType}(5) NULL", columnDefinition);
             }
 
-            [TestMethod]
+            [Fact]
             public void DataTypeHasCharLengthAndCharLengthIsNegative1_ReturnsDataTypeWithMaxCharLength()
             {
                 // Arrange
@@ -85,12 +83,12 @@ namespace SqlBulkUpsert.Tests
                 var columnDefinition = column.ToColumnDefinitionString();
 
                 // Assert
-                Assert.AreEqual($"[myName] {dataType}(max) NULL", columnDefinition);
+                Assert.Equal($"[myName] {dataType}(max) NULL", columnDefinition);
             }
 
-            [DataTestMethod]
-            [DataRow("binary")]
-            [DataRow("varbinary")]
+            [Theory]
+            [InlineData("binary")]
+            [InlineData("varbinary")]
             public void DataTypeHasByteLength_ReturnsDataTypeWithByteLength(string dataType)
             {
                 // Arrange
@@ -105,10 +103,10 @@ namespace SqlBulkUpsert.Tests
                 var columnDefinition = column.ToColumnDefinitionString();
 
                 // Assert
-                Assert.AreEqual($"[myName] {dataType}(2) NULL", columnDefinition);
+                Assert.Equal($"[myName] {dataType}(2) NULL", columnDefinition);
             }
 
-            [TestMethod]
+            [Fact]
             public void DataTypeHasByteLengthAndByteLengthIsMax_ReturnsDataTypeWithMaxByteLength()
             {
                 // Arrange
@@ -124,13 +122,13 @@ namespace SqlBulkUpsert.Tests
                 var columnDefinition = column.ToColumnDefinitionString();
 
                 // Assert
-                Assert.AreEqual($"[myName] {dataType}(max) NULL", columnDefinition);
+                Assert.Equal($"[myName] {dataType}(max) NULL", columnDefinition);
             }
 
-            [DataTestMethod]
-            [DataRow("text")]
-            [DataRow("ntext")]
-            [DataRow("image")]
+            [Theory]
+            [InlineData("text")]
+            [InlineData("ntext")]
+            [InlineData("image")]
             public void ReturnsDataType(string dataType)
             {
                 // Arrange
@@ -145,7 +143,7 @@ namespace SqlBulkUpsert.Tests
                 var columnDefinition = column.ToColumnDefinitionString();
 
                 // Assert
-                Assert.AreEqual($"[myName] {dataType} NULL", columnDefinition);
+                Assert.Equal($"[myName] {dataType} NULL", columnDefinition);
             }
         }
     }

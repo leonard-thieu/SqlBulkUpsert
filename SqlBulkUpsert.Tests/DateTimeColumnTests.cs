@@ -1,13 +1,12 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Xunit;
 
 namespace SqlBulkUpsert.Tests
 {
-    class DateTimeColumnTests
+    public class DateTimeColumnTests
     {
-        [TestClass]
         public class Constructor
         {
-            [TestMethod]
+            [Fact]
             public void SetsPrecision()
             {
                 // Arrange
@@ -21,17 +20,16 @@ namespace SqlBulkUpsert.Tests
                 var column = new DateTimeColumn(name, ordinalPosition, isNullable, dataType, precision);
 
                 // Assert
-                Assert.AreEqual(precision, column.Precision);
+                Assert.Equal(precision, column.Precision);
             }
         }
 
-        [TestClass]
         public class ToFullDataTypeStringMethod
         {
-            [DataTestMethod]
-            [DataRow("datetimeoffset")]
-            [DataRow("datetime2")]
-            [DataRow("time")]
+            [Theory]
+            [InlineData("datetimeoffset")]
+            [InlineData("datetime2")]
+            [InlineData("time")]
             public void DataTypeHasPrecisionAndPrecisionIsNotNull_ReturnsDataTypeWithPrecision(string dataType)
             {
                 // Arrange
@@ -45,13 +43,13 @@ namespace SqlBulkUpsert.Tests
                 var columnDefinition = column.ToColumnDefinitionString();
 
                 // Assert
-                Assert.AreEqual($"[myName] {dataType}(5) NULL", columnDefinition);
+                Assert.Equal($"[myName] {dataType}(5) NULL", columnDefinition);
             }
 
-            [DataTestMethod]
-            [DataRow("datetimeoffset")]
-            [DataRow("datetime2")]
-            [DataRow("time")]
+            [Theory]
+            [InlineData("datetimeoffset")]
+            [InlineData("datetime2")]
+            [InlineData("time")]
             public void DataTypeHasPrecisionAndPrecisionIsNull_ReturnsDataType(string dataType)
             {
                 // Arrange
@@ -65,13 +63,13 @@ namespace SqlBulkUpsert.Tests
                 var columnDefinition = column.ToColumnDefinitionString();
 
                 // Assert
-                Assert.AreEqual($"[myName] {dataType} NULL", columnDefinition);
+                Assert.Equal($"[myName] {dataType} NULL", columnDefinition);
             }
 
-            [DataTestMethod]
-            [DataRow("datetimeoffset")]
-            [DataRow("datetime2")]
-            [DataRow("time")]
+            [Theory]
+            [InlineData("datetimeoffset")]
+            [InlineData("datetime2")]
+            [InlineData("time")]
             public void ReturnsDataType(string dataType)
             {
                 // Arrange
@@ -85,7 +83,7 @@ namespace SqlBulkUpsert.Tests
                 var columnDefinition = column.ToColumnDefinitionString();
 
                 // Assert
-                Assert.AreEqual($"[myName] {dataType} NULL", columnDefinition);
+                Assert.Equal($"[myName] {dataType} NULL", columnDefinition);
             }
         }
     }

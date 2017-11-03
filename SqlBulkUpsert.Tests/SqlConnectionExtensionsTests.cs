@@ -1,22 +1,19 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using toofz.TestsShared;
+using Xunit;
 
 namespace SqlBulkUpsert.Tests
 {
-    class SqlConnectionExtensionsTests
+    public class SqlConnectionExtensionsTests
     {
-        [TestClass]
         public class UseAsyncMethod
         {
-            [TestMethod]
+            [Fact]
             public async Task ConnectionIsNull_ThrowsArgumentNullException()
             {
                 // Arrange
@@ -24,13 +21,13 @@ namespace SqlBulkUpsert.Tests
                 var databaseName = "myDatabase";
 
                 // Act -> Assert
-                await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
+                await Assert.ThrowsAsync<ArgumentNullException>(() =>
                 {
                     return SqlConnectionExtensions.UseAsync(connection, databaseName);
                 });
             }
 
-            [TestMethod]
+            [Fact]
             public async Task DatabaseNameIsNull_ThrowsArgumentNullException()
             {
                 // Arrange
@@ -38,17 +35,16 @@ namespace SqlBulkUpsert.Tests
                 string databaseName = null;
 
                 // Act -> Assert
-                await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
+                await Assert.ThrowsAsync<ArgumentNullException>(() =>
                 {
                     return SqlConnectionExtensions.UseAsync(connection, databaseName);
                 });
             }
         }
 
-        [TestClass]
         public class GetUseCommandMethod
         {
-            [TestMethod]
+            [Fact]
             public void ReturnsUseCommand()
             {
                 // Arrange
@@ -59,14 +55,13 @@ namespace SqlBulkUpsert.Tests
                 var command = SqlConnectionExtensions.GetUseCommand(connection, databaseName);
 
                 // Assert
-                Assert.AreEqual("USE [myDatabase];", command.CommandText);
+                Assert.Equal("USE [myDatabase];", command.CommandText);
             }
         }
 
-        [TestClass]
         public class SelectTableSchemaAsyncMethod
         {
-            [TestMethod]
+            [Fact]
             public async Task ConnectionIsNull_ThrowsArgumentNullException()
             {
                 // Arrange
@@ -74,13 +69,13 @@ namespace SqlBulkUpsert.Tests
                 var tableName = "myTableName";
 
                 // Act -> Assert
-                await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
+                await Assert.ThrowsAsync<ArgumentNullException>(() =>
                 {
                     return SqlConnectionExtensions.SelectTableSchemaAsync(connection, tableName);
                 });
             }
 
-            [TestMethod]
+            [Fact]
             public async Task TableNameIsNull_ThrowsArgumentNullException()
             {
                 // Arrange
@@ -88,30 +83,38 @@ namespace SqlBulkUpsert.Tests
                 string tableName = null;
 
                 // Act -> Assert
-                await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
+                await Assert.ThrowsAsync<ArgumentNullException>(() =>
                 {
                     return SqlConnectionExtensions.SelectTableSchemaAsync(connection, tableName);
                 });
             }
 
-            [TestClass]
-            public class IntegrationTests : DatabaseTestsBase
+            [Trait("Category", "Uses SQL Server")]
+            [Collection(DatabaseCollection.Name)]
+            public class IntegrationTests
             {
-                [TestMethod]
+                public IntegrationTests(DatabaseFixture fixture)
+                {
+                    this.fixture = fixture;
+                }
+
+                private readonly DatabaseFixture fixture;
+
+                [Fact]
                 public async Task SchemDoesnotExist_ThrowsInvalidOperationException()
                 {
                     // Arrange
                     using (var connection = await DatabaseHelper.CreateAndOpenConnectionAsync())
                     {
                         // Act -> Assert
-                        await Assert.ThrowsExceptionAsync<InvalidOperationException>(() =>
+                        await Assert.ThrowsAsync<InvalidOperationException>(() =>
                         {
                             return connection.SelectTableSchemaAsync("DoesNotExist");
                         });
                     }
                 }
 
-                [TestMethod]
+                [Fact]
                 public async Task ReturnsTableSchema()
                 {
                     // Arrange
@@ -139,18 +142,17 @@ namespace SqlBulkUpsert.Tests
                         var schema = await connection.SelectTableSchemaAsync(Constants.TableName);
 
                         // Assert
-                        Assert.AreEqual(Constants.TableName, schema.TableName);
-                        CollectionAssert.AreEqual(expectedColumns, schema.Columns.ToList(), new ColumnComparer());
-                        CollectionAssert.AreEqual(expectedKeyColumns, schema.PrimaryKeyColumns.ToList(), new ColumnComparer());
+                        Assert.Equal(Constants.TableName, schema.TableName);
+                        Assert.Equal(expectedColumns, schema.Columns.ToList(), new ColumnEqualityComparer());
+                        Assert.Equal(expectedKeyColumns, schema.PrimaryKeyColumns.ToList(), new ColumnEqualityComparer());
                     }
                 }
             }
         }
 
-        [TestClass]
         public class GetSelectTableSchemaCommandMethod
         {
-            [TestMethod]
+            [Fact]
             public void ReturnsSelectTableSchemaCommand()
             {
                 // Arrange
@@ -161,7 +163,7 @@ namespace SqlBulkUpsert.Tests
                 var command = SqlConnectionExtensions.GetSelectTableSchemaCommand(connection, tableName);
 
                 // Assert
-                Assert.That.NormalizedAreEqual(@"-- Check table exists
+                Assert.Equal(@"-- Check table exists
 SELECT *
 FROM INFORMATION_SCHEMA.TABLES
 WHERE TABLE_NAME = @tableName;
@@ -177,15 +179,14 @@ FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE kcu
 INNER JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc
     ON kcu.CONSTRAINT_NAME = tc.CONSTRAINT_NAME
     AND CONSTRAINT_TYPE = 'PRIMARY KEY'
-WHERE kcu.TABLE_NAME = @tableName;", command.CommandText);
-                Assert.IsTrue(command.Parameters.Contains("@tableName"));
+WHERE kcu.TABLE_NAME = @tableName;", command.CommandText, ignoreLineEndingDifferences: true);
+                Assert.True(command.Parameters.Contains("@tableName"));
             }
         }
 
-        [TestClass]
         public class ReadTableSchemaAsyncMethod
         {
-            [TestMethod]
+            [Fact]
             public async Task ReadsTableSchema()
             {
                 // Arrange
@@ -246,16 +247,15 @@ WHERE kcu.TABLE_NAME = @tableName;", command.CommandText);
                 var schema = await SqlConnectionExtensions.ReadTableSchemaAsync(dataTableReader, tableName, cancellationToken);
 
                 // Assert 
-                Assert.AreEqual(tableName, schema.TableName);
-                CollectionAssert.AreEqual(expectedColumns, schema.Columns.ToList(), new ColumnComparer());
-                CollectionAssert.AreEqual(expectedKeyColumns, schema.PrimaryKeyColumns.ToList(), new ColumnComparer());
+                Assert.Equal(tableName, schema.TableName);
+                Assert.Equal(expectedColumns, schema.Columns.ToList(), new ColumnEqualityComparer());
+                Assert.Equal(expectedKeyColumns, schema.PrimaryKeyColumns.ToList(), new ColumnEqualityComparer());
             }
         }
 
-        [TestClass]
         public class CountAsyncMethod
         {
-            [TestMethod]
+            [Fact]
             public async Task ConnectionIsNull_ThrowsArgumentNullException()
             {
                 // Arrange
@@ -263,13 +263,13 @@ WHERE kcu.TABLE_NAME = @tableName;", command.CommandText);
                 var tableName = "myTableName";
 
                 // Act -> Assert
-                await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
+                await Assert.ThrowsAsync<ArgumentNullException>(() =>
                 {
                     return SqlConnectionExtensions.CountAsync(connection, tableName);
                 });
             }
 
-            [TestMethod]
+            [Fact]
             public async Task TableNameIsNull_ThrowsArgumentNullException()
             {
                 // Arrange
@@ -277,17 +277,16 @@ WHERE kcu.TABLE_NAME = @tableName;", command.CommandText);
                 string tableName = null;
 
                 // Act -> Assert
-                await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
+                await Assert.ThrowsAsync<ArgumentNullException>(() =>
                 {
                     return SqlConnectionExtensions.CountAsync(connection, tableName);
                 });
             }
         }
 
-        [TestClass]
         public class GetCountCommandMethod
         {
-            [TestMethod]
+            [Fact]
             public void ReturnsCountCommand()
             {
                 // Arrange
@@ -298,15 +297,14 @@ WHERE kcu.TABLE_NAME = @tableName;", command.CommandText);
                 var command = SqlConnectionExtensions.GetCountCommand(connection, tableName);
 
                 // Assert
-                Assert.That.NormalizedAreEqual(@"SELECT Count(*) 
-FROM [myTableName];", command.CommandText);
+                Assert.Equal(@"SELECT Count(*) 
+FROM [myTableName];", command.CommandText, ignoreLineEndingDifferences: true);
             }
         }
 
-        [TestClass]
         public class SwitchTableAsync
         {
-            [TestMethod]
+            [Fact]
             public async Task ConnectionIsNull_ThrowsArgumentNullException()
             {
                 // Arrange
@@ -316,13 +314,13 @@ FROM [myTableName];", command.CommandText);
                 var columns = new Columns(new List<ColumnBase>());
 
                 // Act -> Assert
-                await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
+                await Assert.ThrowsAsync<ArgumentNullException>(() =>
                 {
                     return SqlConnectionExtensions.SwitchTableAsync(connection, viewName, tableName, columns);
                 });
             }
 
-            [TestMethod]
+            [Fact]
             public async Task ViewNameIsNull_ThrowsArgumentNullException()
             {
                 // Arrange
@@ -332,13 +330,13 @@ FROM [myTableName];", command.CommandText);
                 var columns = new Columns(new List<ColumnBase>());
 
                 // Act -> Assert
-                await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
+                await Assert.ThrowsAsync<ArgumentNullException>(() =>
                 {
                     return SqlConnectionExtensions.SwitchTableAsync(connection, viewName, tableName, columns);
                 });
             }
 
-            [TestMethod]
+            [Fact]
             public async Task TableNameIsNull_ThrowsArgumentNullException()
             {
                 // Arrange
@@ -348,17 +346,16 @@ FROM [myTableName];", command.CommandText);
                 var columns = new Columns(new List<ColumnBase>());
 
                 // Act -> Assert
-                await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
+                await Assert.ThrowsAsync<ArgumentNullException>(() =>
                 {
                     return SqlConnectionExtensions.SwitchTableAsync(connection, viewName, tableName, columns);
                 });
             }
         }
 
-        [TestClass]
         public class GetSwitchTableCommandMethod
         {
-            [TestMethod]
+            [Fact]
             public void ReturnsSwitchTableCommand()
             {
                 // Arrange
@@ -381,18 +378,17 @@ FROM [myTableName];", command.CommandText);
                 var command = SqlConnectionExtensions.GetSwitchTableCommand(connection, viewName, tableName, columns);
 
                 // Assert
-                Assert.That.NormalizedAreEqual(@"ALTER VIEW [myViewName]
+                Assert.Equal(@"ALTER VIEW [myViewName]
 AS
 
 SELECT [key_part_1], [key_part_2], [nullable_text], [nullable_number], [nullable_datetimeoffset], [nullable_money], [nullable_varbinary], [nullable_image]
-FROM [myTableName];", command.CommandText);
+FROM [myTableName];", command.CommandText, ignoreLineEndingDifferences: true);
             }
         }
 
-        [TestClass]
         public class TruncateTableAsyncMethod
         {
-            [TestMethod]
+            [Fact]
             public async Task ConnectionIsNull_ThrowsArgumentNullException()
             {
                 // Arrange
@@ -400,13 +396,13 @@ FROM [myTableName];", command.CommandText);
                 var tableName = "myTableName";
 
                 // Act -> Assert
-                await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
+                await Assert.ThrowsAsync<ArgumentNullException>(() =>
                 {
                     return SqlConnectionExtensions.TruncateTableAsync(connection, tableName);
                 });
             }
 
-            [TestMethod]
+            [Fact]
             public async Task TableNameIsNull_ThrowsArgumentNullException()
             {
                 // Arrange
@@ -414,17 +410,16 @@ FROM [myTableName];", command.CommandText);
                 string tableName = null;
 
                 // Act -> Assert
-                await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
+                await Assert.ThrowsAsync<ArgumentNullException>(() =>
                 {
                     return SqlConnectionExtensions.TruncateTableAsync(connection, tableName);
                 });
             }
         }
 
-        [TestClass]
         public class GetTruncateTableCommand
         {
-            [TestMethod]
+            [Fact]
             public void ReturnsTruncateTableCommand()
             {
                 // Arrange
@@ -435,14 +430,13 @@ FROM [myTableName];", command.CommandText);
                 var command = SqlConnectionExtensions.GetTruncateTableCommand(connection, tableName);
 
                 // Assert
-                Assert.AreEqual("TRUNCATE TABLE [myTableName];", command.CommandText);
+                Assert.Equal("TRUNCATE TABLE [myTableName];", command.CommandText);
             }
         }
 
-        [TestClass]
         public class SelectIntoTemporaryTableAsyncMethod
         {
-            [TestMethod]
+            [Fact]
             public async Task ConnectionIsNull_ThrowsArgumentNullException()
             {
                 // Arrange
@@ -451,13 +445,13 @@ FROM [myTableName];", command.CommandText);
                 var tempTableName = "#myTableName";
 
                 // Act -> Assert
-                await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
+                await Assert.ThrowsAsync<ArgumentNullException>(() =>
                 {
                     return SqlConnectionExtensions.SelectIntoTemporaryTableAsync(connection, baseTableName, tempTableName);
                 });
             }
 
-            [TestMethod]
+            [Fact]
             public async Task BaseTableNameIsNull_ThrowsArgumentNullException()
             {
                 // Arrange
@@ -466,13 +460,13 @@ FROM [myTableName];", command.CommandText);
                 var tempTableName = "#myTableName";
 
                 // Act -> Assert
-                await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
+                await Assert.ThrowsAsync<ArgumentNullException>(() =>
                 {
                     return SqlConnectionExtensions.SelectIntoTemporaryTableAsync(connection, baseTableName, tempTableName);
                 });
             }
 
-            [TestMethod]
+            [Fact]
             public async Task TempTableNameIsNull_ThrowsArgumentNullException()
             {
                 // Arrange
@@ -481,17 +475,16 @@ FROM [myTableName];", command.CommandText);
                 string tempTableName = null;
 
                 // Act -> Assert
-                await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
+                await Assert.ThrowsAsync<ArgumentNullException>(() =>
                 {
                     return SqlConnectionExtensions.SelectIntoTemporaryTableAsync(connection, baseTableName, tempTableName);
                 });
             }
         }
 
-        [TestClass]
         public class GetSelectIntoTemporaryTableCommandMethod
         {
-            [TestMethod]
+            [Fact]
             public void ReturnsSelectIntoTemporaryTableCommand()
             {
                 // Arrange
@@ -503,14 +496,13 @@ FROM [myTableName];", command.CommandText);
                 var comnand = SqlConnectionExtensions.GetSelectIntoTemporaryTableCommand(connection, baseTableName, tempTableName);
 
                 // Assert
-                Assert.AreEqual("SELECT TOP 0 * INTO [#myTableName] FROM [myTableName];", comnand.CommandText);
+                Assert.Equal("SELECT TOP 0 * INTO [#myTableName] FROM [myTableName];", comnand.CommandText);
             }
         }
 
-        [TestClass]
         public class MergeAsyncMethod
         {
-            [TestMethod]
+            [Fact]
             public async Task ConnectionIsNull_ThrowsArgumentNullException()
             {
                 // Arrange
@@ -520,13 +512,13 @@ FROM [myTableName];", command.CommandText);
                 var updateWhenMatched = true;
 
                 // Act -> Assert
-                await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
+                await Assert.ThrowsAsync<ArgumentNullException>(() =>
                 {
                     return SqlConnectionExtensions.MergeAsync(connection, tableSource, targetTableSchema, updateWhenMatched);
                 });
             }
 
-            [TestMethod]
+            [Fact]
             public async Task TableSourceIsNull_ThrowsArgumentNullException()
             {
                 // Arrange
@@ -536,13 +528,13 @@ FROM [myTableName];", command.CommandText);
                 var updateWhenMatched = true;
 
                 // Act -> Assert
-                await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
+                await Assert.ThrowsAsync<ArgumentNullException>(() =>
                 {
                     return SqlConnectionExtensions.MergeAsync(connection, tableSource, targetTableSchema, updateWhenMatched);
                 });
             }
 
-            [TestMethod]
+            [Fact]
             public async Task TargetTableSchemaIsNull_ThrowsArgumentNullException()
             {
                 // Arrange
@@ -552,17 +544,16 @@ FROM [myTableName];", command.CommandText);
                 var updateWhenMatched = true;
 
                 // Act -> Assert
-                await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
+                await Assert.ThrowsAsync<ArgumentNullException>(() =>
                 {
                     return SqlConnectionExtensions.MergeAsync(connection, tableSource, targetTableSchema, updateWhenMatched);
                 });
             }
         }
 
-        [TestClass]
         public class GetMergeCommandMethod
         {
-            [TestMethod]
+            [Fact]
             public void UpdateWhenMatchedIsTrue_ReturnsMergeCommandWithUpdateWhenMatched()
             {
                 // Arrange
@@ -575,7 +566,7 @@ FROM [myTableName];", command.CommandText);
                 var command = SqlConnectionExtensions.GetMergeCommand(connection, tableSource, targetTableSchema, updateWhenMatched);
 
                 // Assert
-                Assert.That.NormalizedAreEqual(@"MERGE INTO [myTableName] AS [Target]
+                Assert.Equal(@"MERGE INTO [myTableName] AS [Target]
 USING [myTableSource] AS [Source]
     ON ([Target].[key_part_1] = [Source].[key_part_1] AND [Target].[key_part_2] = [Source].[key_part_2])
 WHEN MATCHED
@@ -591,10 +582,10 @@ WHEN NOT MATCHED
     THEN
         INSERT ([key_part_1], [key_part_2], [nullable_text], [nullable_number], [nullable_datetimeoffset], [nullable_money], [nullable_varbinary], [nullable_image])
         VALUES ([key_part_1], [key_part_2], [nullable_text], [nullable_number], [nullable_datetimeoffset], [nullable_money], [nullable_varbinary], [nullable_image]);
-", command.CommandText);
+", command.CommandText, ignoreLineEndingDifferences: true);
             }
 
-            [TestMethod]
+            [Fact]
             public void UpdateWhenMatchedIsFalse_ReturnsMergeCommand()
             {
                 // Arrange
@@ -607,21 +598,20 @@ WHEN NOT MATCHED
                 var command = SqlConnectionExtensions.GetMergeCommand(connection, tableSource, targetTableSchema, updateWhenMatched);
 
                 // Assert
-                Assert.That.NormalizedAreEqual(@"MERGE INTO [myTableName] AS [Target]
+                Assert.Equal(@"MERGE INTO [myTableName] AS [Target]
 USING [myTableSource] AS [Source]
     ON ([Target].[key_part_1] = [Source].[key_part_1] AND [Target].[key_part_2] = [Source].[key_part_2])
 WHEN NOT MATCHED
     THEN
         INSERT ([key_part_1], [key_part_2], [nullable_text], [nullable_number], [nullable_datetimeoffset], [nullable_money], [nullable_varbinary], [nullable_image])
         VALUES ([key_part_1], [key_part_2], [nullable_text], [nullable_number], [nullable_datetimeoffset], [nullable_money], [nullable_varbinary], [nullable_image]);
-", command.CommandText);
+", command.CommandText, ignoreLineEndingDifferences: true);
             }
         }
 
-        [TestClass]
         public class DisableNonclusteredIndexesAsyncMethod
         {
-            [TestMethod]
+            [Fact]
             public async Task ConnectionIsNull_ThrowsArgumentNullException()
             {
                 // Arrange
@@ -629,13 +619,13 @@ WHEN NOT MATCHED
                 var tableName = "myTableName";
 
                 // Act -> Assert
-                await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
+                await Assert.ThrowsAsync<ArgumentNullException>(() =>
                 {
                     return SqlConnectionExtensions.DisableNonclusteredIndexesAsync(connection, tableName);
                 });
             }
 
-            [TestMethod]
+            [Fact]
             public async Task TableNameIsNull_ThrowsArgumentNullException()
             {
                 // Arrange
@@ -643,17 +633,16 @@ WHEN NOT MATCHED
                 string tableName = null;
 
                 // Act -> Assert
-                await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
+                await Assert.ThrowsAsync<ArgumentNullException>(() =>
                 {
                     return SqlConnectionExtensions.DisableNonclusteredIndexesAsync(connection, tableName);
                 });
             }
         }
 
-        [TestClass]
         public class RebuildNonclusteredIndexesAsyncMethod
         {
-            [TestMethod]
+            [Fact]
             public async Task ConnectionIsNull_ThrowsArgumentNullException()
             {
                 // Arrange
@@ -661,13 +650,13 @@ WHEN NOT MATCHED
                 var tableName = "myTableName";
 
                 // Act -> Assert
-                await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
+                await Assert.ThrowsAsync<ArgumentNullException>(() =>
                 {
                     return SqlConnectionExtensions.RebuildNonclusteredIndexesAsync(connection, tableName);
                 });
             }
 
-            [TestMethod]
+            [Fact]
             public async Task TableNameIsNull_ThrowsArgumentNullException()
             {
                 // Arrange
@@ -675,17 +664,16 @@ WHEN NOT MATCHED
                 string tableName = null;
 
                 // Act -> Assert
-                await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
+                await Assert.ThrowsAsync<ArgumentNullException>(() =>
                 {
                     return SqlConnectionExtensions.RebuildNonclusteredIndexesAsync(connection, tableName);
                 });
             }
         }
 
-        [TestClass]
         public class GetAlterNonclusteredIndexesCommand
         {
-            [TestMethod]
+            [Fact]
             public void ReturnsAlterNonclusteredIndexesCommand()
             {
                 // Arrange
@@ -697,7 +685,7 @@ WHEN NOT MATCHED
                 var command = SqlConnectionExtensions.GetAlterNonclusteredIndexesCommand(connection, tableName, action);
 
                 // Assert
-                Assert.That.NormalizedAreEqual(@"DECLARE @sql AS VARCHAR(MAX)='';
+                Assert.Equal(@"DECLARE @sql AS VARCHAR(MAX)='';
 
 SELECT @sql = @sql + 'ALTER INDEX ' + sys.indexes.name + ' ON ' + sys.objects.name + ' DISABLE;' + CHAR(13) + CHAR(10)
 FROM sys.indexes
@@ -706,8 +694,8 @@ WHERE sys.indexes.type_desc = 'NONCLUSTERED'
   AND sys.objects.type_desc = 'USER_TABLE'
   AND sys.objects.name = @tableName;
 
-EXEC(@sql);", command.CommandText);
-                Assert.IsTrue(command.Parameters.Contains("@tableName"));
+EXEC(@sql);", command.CommandText, ignoreLineEndingDifferences: true);
+                Assert.True(command.Parameters.Contains("@tableName"));
             }
         }
     }

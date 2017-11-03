@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace SqlBulkUpsert.Tests
 {
-    class TypedDataReaderTests
+    public class TypedDataReaderTests
     {
-        [TestClass]
         public class Constructor
         {
-            [TestMethod]
+            [Fact]
             public void ColumnMappingsIsNull_ThrowsArgumentNullException()
             {
                 // Arrange
@@ -17,13 +16,13 @@ namespace SqlBulkUpsert.Tests
                 var items = new List<object>();
 
                 // Act -> Assert
-                Assert.ThrowsException<ArgumentNullException>(() =>
+                Assert.Throws<ArgumentNullException>(() =>
                 {
                     new TypedDataReader<object>(columnMappings, items);
                 });
             }
 
-            [TestMethod]
+            [Fact]
             public void ItemsIsNull_ThrowsArgumentNullException()
             {
                 // Arrange
@@ -31,14 +30,14 @@ namespace SqlBulkUpsert.Tests
                 IEnumerable<object> items = null;
 
                 // Act -> Assert
-                Assert.ThrowsException<ArgumentNullException>(() =>
+                Assert.Throws<ArgumentNullException>(() =>
                 {
                     new TypedDataReader<object>(columnMappings, items);
                 });
             }
 
 
-            [TestMethod]
+            [Fact]
             public void ReturnsInstance()
             {
                 // Arrange
@@ -49,14 +48,13 @@ namespace SqlBulkUpsert.Tests
                 var reader = new TypedDataReader<object>(columnMappings, items);
 
                 // Assert
-                Assert.IsInstanceOfType(reader, typeof(TypedDataReader<object>));
+                Assert.IsAssignableFrom<TypedDataReader<object>>(reader);
             }
         }
 
-        [TestClass]
         public class GetValueMethod
         {
-            [TestMethod]
+            [Fact]
             public void ReturnsValue()
             {
                 // Arrange
@@ -86,14 +84,13 @@ namespace SqlBulkUpsert.Tests
                 var value = reader.GetValue(0);
 
                 // Assert
-                Assert.AreEqual("TEST", value);
+                Assert.Equal("TEST", value);
             }
         }
 
-        [TestClass]
         public class GetOrdinalMethod
         {
-            [TestMethod]
+            [Fact]
             public void ReturnsOrdinal()
             {
                 // Arrange
@@ -122,14 +119,13 @@ namespace SqlBulkUpsert.Tests
                 var ordinal = reader.GetOrdinal("nullable_text");
 
                 // Assert
-                Assert.AreEqual(2, ordinal);
+                Assert.Equal(2, ordinal);
             }
         }
 
-        [TestClass]
         public class FieldCountProperty
         {
-            [TestMethod]
+            [Fact]
             public void ReturnsFieldCount()
             {
                 // Arrange
@@ -158,14 +154,13 @@ namespace SqlBulkUpsert.Tests
                 var fieldCount = reader.FieldCount;
 
                 // Assert
-                Assert.AreEqual(5, fieldCount);
+                Assert.Equal(5, fieldCount);
             }
         }
 
-        [TestClass]
         public class ReadMethod
         {
-            [TestMethod]
+            [Fact]
             public void ReadIsSuccessful_ReturnsTrue()
             {
                 // Arrange
@@ -194,10 +189,10 @@ namespace SqlBulkUpsert.Tests
                 var isSuccessful = reader.Read();
 
                 // Assert
-                Assert.IsTrue(isSuccessful);
+                Assert.True(isSuccessful);
             }
 
-            [TestMethod]
+            [Fact]
             public void ReadIsNotSuccessful_ReturnsFalse()
             {
                 // Arrange
@@ -227,11 +222,11 @@ namespace SqlBulkUpsert.Tests
                 var isSuccessful = reader.Read();
 
                 // Assert
-                Assert.IsFalse(isSuccessful);
+                Assert.False(isSuccessful);
             }
         }
 
-        class TestDto
+        private class TestDto
         {
             public string KeyPart1 { get; set; }
             public short KeyPart2 { get; set; }

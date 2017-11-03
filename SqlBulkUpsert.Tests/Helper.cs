@@ -2,7 +2,7 @@
 
 namespace SqlBulkUpsert.Tests
 {
-    static class Helper
+    internal static class Helper
     {
         public static IEnumerable<ColumnBase> FakeColumns { get; } = new List<ColumnBase>
         {

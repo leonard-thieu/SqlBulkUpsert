@@ -8,7 +8,7 @@ using SqlBulkUpsert.Tests.Properties;
 
 namespace SqlBulkUpsert.Tests
 {
-    static class DatabaseHelper
+    internal static class DatabaseHelper
     {
         public static Task CreateDatabaseAsync() => ExecuteCommandsAsync(Resources.CreateDatabase);
 
@@ -18,7 +18,7 @@ namespace SqlBulkUpsert.Tests
         /// Execute some SQL against the database
         /// </summary>
         /// <param name="sqlCommandText">SQL containing one or multiple command separated by \r\nGO\r\n</param>
-        static async Task ExecuteCommandsAsync(string sqlCommandText)
+        private static async Task ExecuteCommandsAsync(string sqlCommandText)
         {
             using (var connection = await CreateAndOpenConnectionAsync().ConfigureAwait(false))
             using (var command = connection.CreateCommand())
